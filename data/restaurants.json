@@ -1,0 +1,125 @@
+[
+  {
+    "id": "918ad719-f85b-4abb-8c02-6f96b7fd34bf",
+    "name": "Back 40 A1A",
+    "address": "",
+    "website": "https://www.back40a1a.com/",
+    "logoUrl": "https://www.google.com/s2/favicons?domain=www.back40a1a.com&sz=128",
+    "latitude": null,
+    "longitude": null,
+    "createdAt": "2026-05-12T20:14:36.437Z",
+    "specials": [
+      {
+        "id": "5a2293d6-15b5-4ac7-b899-ded973a8c7e6",
+        "title": "Test",
+        "description": "test",
+        "days": [
+          "Monday",
+          "Tuesday"
+        ],
+        "allDay": true,
+        "startTime": null,
+        "endTime": null
+      }
+    ]
+  },
+  {
+    "id": "c06cdcb2-3732-46e8-8b9a-5022dc183fe2",
+    "name": "Back 40 A1A",
+    "address": "",
+    "website": "https://www.back40a1a.com/",
+    "logoUrl": "https://www.google.com/s2/favicons?domain=www.back40a1a.com&sz=128",
+    "latitude": null,
+    "longitude": null,
+    "createdAt": "2026-05-12T20:12:16.538Z",
+    "specials": [
+      {
+        "id": "8eb16293-442b-4223-bba0-5c1798426c5e",
+        "title": "Test",
+        "description": "test",
+        "days": [
+          "Monday",
+          "Wednesday",
+          "Thursday"
+        ],
+        "allDay": true,
+        "startTime": null,
+        "endTime": null
+      }
+    ]
+  },
+  {
+    "id": "2767d1ea-8df3-456c-9fa1-dc291b87f995",
+    "name": "Back 40 A1A",
+    "address": "",
+    "website": "https://www.back40a1a.com/",
+    "logoUrl": "https://www.google.com/s2/favicons?domain=www.back40a1a.com&sz=128",
+    "latitude": null,
+    "longitude": null,
+    "createdAt": "2026-05-12T20:09:03.564Z",
+    "specials": [
+      {
+        "id": "95bb2d9a-ddfd-4b0a-96a1-7ace91b5e31d",
+        "title": "Test",
+        "description": "test",
+        "days": [
+          "Monday",
+          "Tuesday"
+        ],
+        "allDay": true,
+        "startTime": null,
+        "endTime": null
+      }
+    ]
+  },
+  {
+    "id": "af661d18-d7c7-43f6-bc7e-1d2102bb6ac0",
+    "name": "Back 40 A1A",
+    "address": "6101 A1A S Unit 111, St. Augustine, FL 32080",
+    "website": "https://www.back40a1a.com/",
+    "logoUrl": "https://www.google.com/s2/favicons?domain=www.back40a1a.com&sz=128",
+    "latitude": null,
+    "longitude": null,
+    "createdAt": "2026-05-12T19:31:51.615Z",
+    "specials": [
+      {
+        "id": "4b0ab5dd-6350-4c26-9817-9918e561ba44",
+        "title": "Wine Down Wednesday",
+        "description": "$20 bottles of wine",
+        "days": [
+          "Wednesday"
+        ],
+        "allDay": true,
+        "startTime": null,
+        "endTime": null
+      }
+    ]
+  },
+  {
+    "id": "919edb97-4a08-436b-afa1-deca9f7cdaef",
+    "name": "Barley Republic",
+    "address": "",
+    "website": "https://www.barleyrepublic.com/menus/weekly-specials",
+    "logoUrl": null,
+    "latitude": null,
+    "longitude": null,
+    "createdAt": "2026-05-12T19:38:45.833Z",
+    "specials": [
+      {
+        "id": "a50b8006-4b2d-4f9d-b8a1-eaa8742035d3",
+        "title": "Happy Hour",
+        "description": "$5 smash burgers, as well as $5 select draft beers, well cocktails, house wines and house-made sangria",
+        "days": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday"
+        ],
+        "allDay": false,
+        "startTime": "17:00",
+        "endTime": "19:00"
+      }
+    ]
+  }
+]
