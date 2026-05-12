@@ -6,7 +6,7 @@ import type { Restaurant } from "@/lib/types";
 
 const RestaurantMap = dynamic(
   () =>
-    import("@/components/restaurant-map").then((module) => module.RestaurantMap),
+    import("@/components/RestaurantMap").then((module) => module.RestaurantMap),
   {
     ssr: false,
     loading: () => (

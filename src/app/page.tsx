@@ -1,6 +1,6 @@
-import { MapSection } from "@/components/map-section";
-import { RestaurantForm } from "@/components/restaurant-form";
-import { RestaurantList } from "@/components/restaurant-list";
+import { MapSection } from "@/components/MapSection";
+import { RestaurantForm } from "@/components/RestaurantForm";
+import { RestaurantList } from "@/components/RestaurantList";
 import { getRestaurants } from "@/lib/data";
 import { getWebsiteDomain } from "@/lib/logo";
 

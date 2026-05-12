@@ -3,8 +3,8 @@
 import { useRef, useState } from "react";
 
 import { createRestaurant } from "@/app/actions";
-import { SpecialDayFields } from "@/components/special-day-fields";
-import { SpecialTimeFields } from "@/components/special-time-fields";
+import { SpecialDayFields } from "@/components/SpecialDayFields";
+import { SpecialTimeFields } from "@/components/SpecialTimeFields";
 
 export function RestaurantForm() {
   const formRef = useRef<HTMLFormElement>(null);

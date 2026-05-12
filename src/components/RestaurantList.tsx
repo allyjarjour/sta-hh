@@ -1,7 +1,7 @@
 import { deleteRestaurant, updateRestaurant } from "@/app/actions";
-import { DeleteRestaurantButton } from "@/components/delete-restaurant-button";
-import { SpecialDayFields } from "@/components/special-day-fields";
-import { SpecialTimeFields } from "@/components/special-time-fields";
+import { DeleteRestaurantButton } from "@/components/DeleteRestaurantButton";
+import { SpecialDayFields } from "@/components/SpecialDayFields";
+import { SpecialTimeFields } from "@/components/SpecialTimeFields";
 import type { Restaurant } from "@/lib/types";
 
 function formatTime(value: string) {
