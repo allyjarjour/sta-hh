@@ -1,5 +1,6 @@
 "use client";
 
+import { Checkbox, Group } from "@mantine/core";
 import { useEffect, useRef, useState } from "react";
 
 import { WEEKDAYS, type Weekday } from "@/lib/types";
@@ -9,12 +10,12 @@ type SpecialDayFieldsProps = {
 };
 
 export function SpecialDayFields({ defaultDays = [] }: SpecialDayFieldsProps) {
-  const fieldsetRef = useRef<HTMLFieldSetElement>(null);
+  const groupRef = useRef<HTMLDivElement>(null);
   const [selectedDays, setSelectedDays] = useState<Weekday[]>(defaultDays);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const form = fieldsetRef.current?.closest("form");
+    const form = groupRef.current?.closest("form");
 
     if (!form) {
       return;
@@ -28,7 +29,7 @@ export function SpecialDayFields({ defaultDays = [] }: SpecialDayFieldsProps) {
 
       event.preventDefault();
       setError("Choose at least one day for the special.");
-      fieldsetRef.current?.querySelector("input")?.focus();
+      groupRef.current?.querySelector("input")?.focus();
     }
 
     form.addEventListener("submit", validateDaySelection);
@@ -36,39 +37,27 @@ export function SpecialDayFields({ defaultDays = [] }: SpecialDayFieldsProps) {
     return () => form.removeEventListener("submit", validateDaySelection);
   }, [selectedDays]);
 
-  function toggleDay(day: Weekday) {
-    setError(null);
-    setSelectedDays((currentDays) =>
-      currentDays.includes(day)
-        ? currentDays.filter((currentDay) => currentDay !== day)
-        : [...currentDays, day],
-    );
-  }
-
   return (
-    <fieldset ref={fieldsetRef} className="mt-4">
-      <legend className="text-sm font-medium text-stone-700">
-        Available days
-      </legend>
-      <div className="mt-3 flex flex-wrap gap-2">
+    <Checkbox.Group
+      ref={groupRef}
+      label="Available days"
+      value={selectedDays}
+      error={<span className="mt-[5px]">{error}</span>}
+      onChange={(value) => {
+        setError(null);
+        setSelectedDays(value as Weekday[]);
+      }}
+    >
+      <Group gap="xs" mt="xs">
         {WEEKDAYS.map((day) => (
-          <label
+          <Checkbox
             key={day}
-            className="flex cursor-pointer items-center gap-2 rounded-full border border-orange-100 bg-white px-3 py-2 text-sm text-stone-700"
-          >
-            <input
-              name="days"
-              type="checkbox"
-              value={day}
-              checked={selectedDays.includes(day)}
-              aria-invalid={error ? "true" : "false"}
-              onChange={() => toggleDay(day)}
-            />
-            {day.slice(0, 3)}
-          </label>
+            name="days"
+            value={day}
+            label={day.slice(0, 3)}
+          />
         ))}
-      </div>
-      {error ? <p className="mt-2 text-sm text-red-600">{error}</p> : null}
-    </fieldset>
+      </Group>
+    </Checkbox.Group>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { Checkbox, SimpleGrid, Stack, TextInput } from "@mantine/core";
+import { useEffect, useRef, useState } from "react";
 
 type SpecialTimeFieldsProps = {
   defaultAllDay?: boolean;
@@ -14,50 +15,82 @@ export function SpecialTimeFields({
   defaultEndTime,
 }: SpecialTimeFieldsProps) {
   const [allDay, setAllDay] = useState(defaultAllDay);
+  const startTimeRef = useRef<HTMLInputElement>(null);
+  const endTimeRef = useRef<HTMLInputElement>(null);
+  const [startTimeError, setStartTimeError] = useState<string | null>(null);
+  const [endTimeError, setEndTimeError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const form = startTimeRef.current?.form;
+
+    if (!form) {
+      return;
+    }
+
+    function validateTimes(event: SubmitEvent) {
+      if (allDay) {
+        return;
+      }
+
+      const missingStartTime = !startTimeRef.current?.value;
+      const missingEndTime = !endTimeRef.current?.value;
+
+      setStartTimeError(
+        missingStartTime ? "Choose a start time or mark this all day." : null,
+      );
+      setEndTimeError(
+        missingEndTime ? "Choose an end time or mark this all day." : null,
+      );
+
+      if (missingStartTime || missingEndTime) {
+        event.preventDefault();
+        (missingStartTime ? startTimeRef : endTimeRef).current?.focus();
+      }
+    }
+
+    form.addEventListener("submit", validateTimes);
+
+    return () => form.removeEventListener("submit", validateTimes);
+  }, [allDay]);
 
   return (
-    <>
-      <label className="mt-4 flex cursor-pointer items-center gap-3 rounded-2xl border border-orange-100 bg-white px-4 py-3 text-sm font-medium text-stone-700">
-        <input
-          name="allDay"
-          type="checkbox"
-          checked={allDay}
-          onChange={(event) => setAllDay(event.target.checked)}
+    <Stack gap="sm">
+      <Checkbox
+        name="allDay"
+        checked={allDay}
+        label="This special lasts all day"
+        onChange={(event) => {
+          setAllDay(event.target.checked);
+
+          if (event.target.checked) {
+            setStartTimeError(null);
+            setEndTimeError(null);
+          }
+        }}
+      />
+
+      <SimpleGrid cols={{ base: 1, sm: 2 }}>
+        <TextInput
+          ref={startTimeRef}
+          label="Starts"
+          name="startTime"
+          type="time"
+          defaultValue={defaultStartTime ?? ""}
+          disabled={allDay}
+          error={startTimeError}
+          onChange={() => setStartTimeError(null)}
         />
-        This special lasts all day
-      </label>
-
-      <div className="mt-4 grid gap-4 md:grid-cols-2">
-        <label className="grid gap-2 text-sm font-medium text-stone-700">
-          Starts
-          <input
-            name="startTime"
-            type="time"
-            defaultValue={defaultStartTime ?? ""}
-            disabled={allDay}
-            required={!allDay}
-            className="rounded-2xl border border-orange-100 px-4 py-3 outline-none transition focus:border-orange-400 focus:ring-4 focus:ring-orange-100 disabled:cursor-not-allowed disabled:bg-stone-100 disabled:text-stone-400"
-          />
-          <span className="text-xs font-normal text-stone-500">
-            Required unless the special lasts all day.
-          </span>
-        </label>
-
-        <label className="grid gap-2 text-sm font-medium text-stone-700">
-          Ends
-          <input
-            name="endTime"
-            type="time"
-            defaultValue={defaultEndTime ?? ""}
-            disabled={allDay}
-            required={!allDay}
-            className="rounded-2xl border border-orange-100 px-4 py-3 outline-none transition focus:border-orange-400 focus:ring-4 focus:ring-orange-100 disabled:cursor-not-allowed disabled:bg-stone-100 disabled:text-stone-400"
-          />
-          <span className="text-xs font-normal text-stone-500">
-            Required unless the special lasts all day.
-          </span>
-        </label>
-      </div>
-    </>
+        <TextInput
+          ref={endTimeRef}
+          label="Ends"
+          name="endTime"
+          type="time"
+          defaultValue={defaultEndTime ?? ""}
+          disabled={allDay}
+          error={endTimeError}
+          onChange={() => setEndTimeError(null)}
+        />
+      </SimpleGrid>
+    </Stack>
   );
 }

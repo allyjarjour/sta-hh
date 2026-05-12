@@ -43,7 +43,7 @@ export function RestaurantMap({ restaurants }: { restaurants: Restaurant[] }) {
   const center = getCenter(mappedRestaurants);
 
   return (
-    <MapContainer center={center} zoom={13} scrollWheelZoom={false}>
+    <MapContainer center={center} zoom={13} scrollWheelZoom={false} className="z-0">
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

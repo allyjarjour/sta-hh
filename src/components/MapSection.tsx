@@ -1,5 +1,6 @@
 "use client";
 
+import { Badge, Group, Paper, Stack, Text, Title } from "@mantine/core";
 import dynamic from "next/dynamic";
 
 import type { Restaurant } from "@/lib/types";
@@ -24,22 +25,22 @@ export function MapSection({ restaurants }: { restaurants: Restaurant[] }) {
   ).length;
 
   return (
-    <section className="rounded-[2rem] border border-orange-200 bg-white/75 p-4 shadow-sm backdrop-blur">
-      <div className="mb-4 flex flex-wrap items-end justify-between gap-3 px-2">
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-orange-600">
+    <Paper p="md" radius="xl" shadow="sm" withBorder>
+      <Group align="end" justify="space-between" mb="md" px="xs">
+        <Stack gap={2}>
+          <Text c="orange" fw={700} size="sm" tt="uppercase" lts={2}>
             Map
-          </p>
-          <h2 className="mt-1 text-2xl font-bold text-stone-950">
+          </Text>
+          <Title order={2}>
             Participating restaurants
-          </h2>
-        </div>
-        <p className="text-sm text-stone-600">
+          </Title>
+        </Stack>
+        <Badge color="orange" variant="light">
           {mappedCount} of {restaurants.length} with coordinates
-        </p>
-      </div>
+        </Badge>
+      </Group>
 
       <RestaurantMap restaurants={restaurants} />
-    </section>
+    </Paper>
   );
 }

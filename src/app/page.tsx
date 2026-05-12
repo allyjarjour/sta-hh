@@ -1,8 +1,22 @@
+import {
+  AppShell,
+  AppShellHeader,
+  AppShellMain,
+  Badge,
+  Container,
+  Group,
+  Paper,
+  SimpleGrid,
+  Stack,
+  Text,
+  Title,
+} from "@mantine/core";
+
 import { MapSection } from "@/components/MapSection";
 import { RestaurantForm } from "@/components/RestaurantForm";
-import { RestaurantList } from "@/components/RestaurantList";
 import { getRestaurants } from "@/lib/data";
 import { getWebsiteDomain } from "@/lib/logo";
+import { RestaurantList } from "@/components/RestaurantList";
 
 export const dynamic = "force-dynamic";
 
@@ -17,54 +31,86 @@ export default async function Home() {
   ).size;
 
   return (
-    <main className="mx-auto grid max-w-7xl gap-10 px-5 py-8 md:px-8 lg:py-12">
-      <section className="grid gap-8 lg:grid-cols-[1fr_0.82fr] lg:items-center">
-        <div>
-          <div className="inline-flex rounded-full border border-orange-200 bg-white/70 px-4 py-2 text-sm font-medium text-orange-700 shadow-sm">
-            Local happy hours, all in one place
-          </div>
+    <AppShell header={{ height: 72 }} padding="md">
+      <AppShellHeader withBorder={false}>
+        <Container size="xl" h="100%">
+          <Group h="100%" justify="space-between">
+            <Group gap="sm">
+              <Badge color="orange" size="lg" variant="light">
+                HH
+              </Badge>
+              <Text fw={800} size="lg">
+                Happy Hour Town
+              </Text>
+            </Group>
+            <Group gap="xs" visibleFrom="sm">
+              <Badge color="orange" variant="light">
+                St. Augustine
+              </Badge>
+              <Badge color="dark" variant="light">
+                {uniqueRestaurantCount} restaurants
+              </Badge>
+            </Group>
+          </Group>
+        </Container>
+      </AppShellHeader>
 
-          <h1 className="mt-6 max-w-3xl text-5xl font-black tracking-tight text-stone-950 md:text-7xl">
-            Find tonight&apos;s best deals around town.
-          </h1>
+      <AppShellMain>
+        <Container size="xl" py={{ base: "xl", md: 48 }}>
+          <Stack gap="xl">
+            <SimpleGrid cols={{ base: 1, lg: 2 }} spacing="xl" verticalSpacing="xl">
+              <Stack justify="center" gap="lg">
+                <Badge color="orange" size="lg" variant="light" w="fit-content">
+                  Local happy hours, all in one place
+                </Badge>
 
-          <p className="mt-5 max-w-2xl text-lg leading-8 text-stone-700">
-            Collect restaurant specials by day and show every participating spot on a shared town map.
-          </p>
+                <Title order={1} size="clamp(3rem, 8vw, 6rem)" lh={0.95}>
+                  Find tonight&apos;s best deals around town.
+                </Title>
 
-          <div className="mt-8 grid max-w-lg grid-cols-2 gap-3 sm:grid-cols-3">
-            <div className="rounded-3xl bg-white/80 p-4 shadow-sm">
-              <p className="text-3xl font-black text-stone-950">
-                {uniqueRestaurantCount}
-              </p>
-              <p className="mt-1 text-sm text-stone-600">Restaurants</p>
-            </div>
-            <div className="rounded-3xl bg-white/80 p-4 shadow-sm">
-              <p className="text-3xl font-black text-stone-950">
-                {totalSpecials}
-              </p>
-              <p className="mt-1 text-sm text-stone-600">Specials</p>
-            </div>
-          </div>
-        </div>
+                <Text c="dimmed" size="xl" maw={680}>
+                  Collect restaurant specials by day and show every participating
+                  spot on a shared town map.
+                </Text>
 
-        <RestaurantForm />
-      </section>
+                <SimpleGrid cols={{ base: 2, sm: 3 }} maw={560}>
+                  <Paper p="lg" radius="xl" shadow="xs" withBorder>
+                    <Text fw={900} size="2rem" lh={1}>
+                      {uniqueRestaurantCount}
+                    </Text>
+                    <Text c="dimmed" size="sm" mt={4}>
+                      Restaurants
+                    </Text>
+                  </Paper>
+                  <Paper p="lg" radius="xl" shadow="xs" withBorder>
+                    <Text fw={900} size="2rem" lh={1}>
+                      {totalSpecials}
+                    </Text>
+                    <Text c="dimmed" size="sm" mt={4}>
+                      Specials
+                    </Text>
+                  </Paper>
+                </SimpleGrid>
+              </Stack>
 
-      <MapSection restaurants={restaurants} />
+              <RestaurantForm />
+            </SimpleGrid>
 
-      <section className="grid gap-4">
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-orange-600">
-            Specials
-          </p>
-          <h2 className="mt-1 text-2xl font-bold text-stone-950">
-            Current happy hours
-          </h2>
-        </div>
+            <MapSection restaurants={restaurants} />
 
-        <RestaurantList restaurants={restaurants} />
-      </section>
-    </main>
+            <Stack gap="md">
+              <div>
+                <Text c="orange" fw={700} size="sm" tt="uppercase" lts={2}>
+                  Specials
+                </Text>
+                <Title order={2}>Current happy hours</Title>
+              </div>
+
+              <RestaurantList restaurants={restaurants} />
+            </Stack>
+          </Stack>
+        </Container>
+      </AppShellMain>
+    </AppShell>
   );
 }
