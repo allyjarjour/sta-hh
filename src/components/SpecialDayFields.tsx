@@ -42,13 +42,13 @@ export function SpecialDayFields({ defaultDays = [] }: SpecialDayFieldsProps) {
       ref={groupRef}
       label="Available days"
       value={selectedDays}
-      error={<span className="mt-[5px]">{error}</span>}
+      error={error}
       onChange={(value) => {
         setError(null);
         setSelectedDays(value as Weekday[]);
       }}
     >
-      <Group gap="xs" mt="xs">
+      <Group gap="xs" mt="xs" mb={5}>
         {WEEKDAYS.map((day) => (
           <Checkbox
             key={day}
