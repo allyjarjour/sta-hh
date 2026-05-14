@@ -12,11 +12,10 @@ import {
   Title,
 } from "@mantine/core";
 
-import { MapSection } from "@/components/MapSection";
 import { RestaurantForm } from "@/components/RestaurantForm";
+import { SpecialsBrowseSection } from "@/components/SpecialsBrowseSection";
 import { getRestaurants } from "@/lib/data";
 import { getWebsiteDomain } from "@/lib/logo";
-import { RestaurantList } from "@/components/RestaurantList";
 
 export const dynamic = "force-dynamic";
 
@@ -96,18 +95,7 @@ export default async function Home() {
               <RestaurantForm />
             </SimpleGrid>
 
-            <MapSection restaurants={restaurants} />
-
-            <Stack gap="md">
-              <div>
-                <Text c="orange" fw={700} size="sm" tt="uppercase" lts={2}>
-                  Specials
-                </Text>
-                <Title order={2}>Current happy hours</Title>
-              </div>
-
-              <RestaurantList restaurants={restaurants} />
-            </Stack>
+            <SpecialsBrowseSection restaurants={restaurants} />
           </Stack>
         </Container>
       </AppShellMain>

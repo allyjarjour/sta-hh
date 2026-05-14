@@ -16,7 +16,11 @@ import {
   type Restaurant,
   type Weekday,
 } from "@/lib/types";
-import { getFaviconUrl, normalizeWebsiteUrl } from "../lib/logo";
+import {
+  getFaviconUrl,
+  parseOptionalPublicHttpUrl,
+  parsePublicHttpUrl,
+} from "../lib/logo";
 
 function requiredString(formData: FormData, key: string) {
   const value = formData.get(key);
@@ -110,7 +114,7 @@ async function coordinatesForAddress(
 
 export async function createRestaurant(formData: FormData) {
   const name = requiredString(formData, "name");
-  const website = normalizeWebsiteUrl(requiredString(formData, "website"));
+  const website = parsePublicHttpUrl(requiredString(formData, "website"), "Website");
   const manualAddress = optionalString(formData, "address");
   const manualLogoUrl = optionalString(formData, "logoUrl");
   const address = manualAddress ?? "";
@@ -122,7 +126,8 @@ export async function createRestaurant(formData: FormData) {
     name,
     address,
     website,
-    logoUrl: manualLogoUrl ?? getFaviconUrl(website),
+    logoUrl:
+      parseOptionalPublicHttpUrl(manualLogoUrl, "Logo URL") ?? getFaviconUrl(website),
     latitude,
     longitude,
     createdAt: new Date().toISOString(),
@@ -136,7 +141,7 @@ export async function createRestaurant(formData: FormData) {
 export async function updateRestaurant(formData: FormData) {
   const id = restaurantId(formData);
   const name = requiredString(formData, "name");
-  const website = normalizeWebsiteUrl(requiredString(formData, "website"));
+  const website = parsePublicHttpUrl(requiredString(formData, "website"), "Website");
   const manualAddress = optionalString(formData, "address");
   const manualLogoUrl = optionalString(formData, "logoUrl");
   const address = manualAddress ?? "";
@@ -158,7 +163,8 @@ export async function updateRestaurant(formData: FormData) {
     name,
     address,
     website,
-    logoUrl: manualLogoUrl ?? getFaviconUrl(website),
+    logoUrl:
+      parseOptionalPublicHttpUrl(manualLogoUrl, "Logo URL") ?? getFaviconUrl(website),
     latitude,
     longitude,
     specials: [

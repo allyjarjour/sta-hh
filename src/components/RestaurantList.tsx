@@ -13,7 +13,7 @@ import {
 import { deleteRestaurant } from "@/app/actions";
 import { DeleteRestaurantButton } from "@/components/DeleteRestaurantButton";
 import { RestaurantEditForm } from "@/components/RestaurantEditForm";
-import type { Restaurant } from "@/lib/types";
+import type { Restaurant, Weekday } from "@/lib/types";
 
 function formatTime(value: string) {
   const [hour, minute] = value.split(":");
@@ -39,7 +39,29 @@ function formatSpecialTime(special: Restaurant["specials"][number]) {
   return "Time TBD";
 }
 
-export function RestaurantList({ restaurants }: { restaurants: Restaurant[] }) {
+export function RestaurantList({
+  restaurants,
+  weekdayFilter = null,
+  noMatchesForFilter = false,
+}: {
+  restaurants: Restaurant[];
+  weekdayFilter?: Weekday | null;
+  noMatchesForFilter?: boolean;
+}) {
+  if (noMatchesForFilter && weekdayFilter) {
+    return (
+      <Paper p="xl" radius="xl" withBorder>
+        <Text c="dimmed" ta="center">
+          No specials on{" "}
+          <Text component="span" fw={700} inherit>
+            {weekdayFilter}
+          </Text>
+          . Pick another day or choose &quot;All days&quot;.
+        </Text>
+      </Paper>
+    );
+  }
+
   if (restaurants.length === 0) {
     return (
       <Paper p="xl" radius="xl" withBorder>
@@ -54,6 +76,12 @@ export function RestaurantList({ restaurants }: { restaurants: Restaurant[] }) {
   return (
     <Stack gap="md">
       {restaurants.map((restaurant) => {
+        const specialsToShow = weekdayFilter
+          ? restaurant.specials.filter((special) =>
+              special.days.includes(weekdayFilter),
+            )
+          : restaurant.specials;
+
         return (
           <Card key={restaurant.id} p="lg" radius="xl" shadow="sm" withBorder>
             <Group align="flex-start" wrap="nowrap">
@@ -101,7 +129,7 @@ export function RestaurantList({ restaurants }: { restaurants: Restaurant[] }) {
                 </Group>
 
                 <Stack gap="sm">
-                  {restaurant.specials.map((special) => (
+                  {specialsToShow.map((special) => (
                     <Paper key={special.id} bg="gray.0" p="md" radius="lg">
                       <Group justify="space-between" gap="xs">
                         <Text fw={700}>{special.title}</Text>
