@@ -10,6 +10,7 @@ import {
   TextInput,
   Title,
 } from "@mantine/core";
+import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 
 import { createRestaurant } from "@/app/actions";
@@ -42,6 +43,7 @@ function getRequiredFieldErrors(formData: FormData): FieldErrors {
 }
 
 export function RestaurantForm() {
+  const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const [resetKey, setResetKey] = useState(0);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
@@ -70,6 +72,7 @@ export function RestaurantForm() {
     await createRestaurant(formData);
     formRef.current?.reset();
     setResetKey((currentKey) => currentKey + 1);
+    router.refresh();
   }
 
   function clearFieldError(field: RequiredField) {
@@ -91,10 +94,6 @@ export function RestaurantForm() {
             <Title order={2} mt={4}>
               List a participating restaurant
             </Title>
-            <Text c="dimmed" size="sm" mt="xs">
-              Paste the restaurant website and the app will use it to pull a
-              logo. Add the address if you want it shown on the listing.
-            </Text>
           </div>
 
           <SimpleGrid cols={{ base: 1, sm: 2 }}>

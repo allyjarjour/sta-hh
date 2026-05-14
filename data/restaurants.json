@@ -1,5 +1,28 @@
 [
   {
+    "id": "81878b66-0e56-437e-a740-b081bbef6e62",
+    "name": "Back 40 A1A",
+    "address": "6101 A1A S Unit 111, St. Augustine, FL 32080",
+    "website": "https://www.back40a1a.com",
+    "logoUrl": "https://www.google.com/s2/favicons?domain=www.back40a1a.com&sz=128",
+    "latitude": 29.8611867,
+    "longitude": -81.2780349,
+    "createdAt": "2026-05-14T02:02:57.532Z",
+    "specials": [
+      {
+        "id": "a1ef60e3-0bab-4cc8-aefa-3ddc9e2c711c",
+        "title": "Test",
+        "description": "test",
+        "days": [
+          "Wednesday"
+        ],
+        "allDay": true,
+        "startTime": null,
+        "endTime": null
+      }
+    ]
+  },
+  {
     "id": "918ad719-f85b-4abb-8c02-6f96b7fd34bf",
     "name": "Back 40 A1A",
     "address": "",
@@ -16,31 +39,6 @@
         "days": [
           "Monday",
           "Tuesday"
-        ],
-        "allDay": true,
-        "startTime": null,
-        "endTime": null
-      }
-    ]
-  },
-  {
-    "id": "c06cdcb2-3732-46e8-8b9a-5022dc183fe2",
-    "name": "Back 40 A1A",
-    "address": "",
-    "website": "https://www.back40a1a.com/",
-    "logoUrl": "https://www.google.com/s2/favicons?domain=www.back40a1a.com&sz=128",
-    "latitude": null,
-    "longitude": null,
-    "createdAt": "2026-05-12T20:12:16.538Z",
-    "specials": [
-      {
-        "id": "8eb16293-442b-4223-bba0-5c1798426c5e",
-        "title": "Test",
-        "description": "test",
-        "days": [
-          "Monday",
-          "Wednesday",
-          "Thursday"
         ],
         "allDay": true,
         "startTime": null,
@@ -98,11 +96,11 @@
   {
     "id": "919edb97-4a08-436b-afa1-deca9f7cdaef",
     "name": "Barley Republic",
-    "address": "",
+    "address": "48 Spanish St, St. Augustine, FL 32084",
     "website": "https://www.barleyrepublic.com/menus/weekly-specials",
-    "logoUrl": null,
-    "latitude": null,
-    "longitude": null,
+    "logoUrl": "https://www.google.com/s2/favicons?domain=www.barleyrepublic.com&sz=128",
+    "latitude": 29.8953826,
+    "longitude": -81.3138556,
     "createdAt": "2026-05-12T19:38:45.833Z",
     "specials": [
       {
@@ -119,6 +117,29 @@
         "allDay": false,
         "startTime": "17:00",
         "endTime": "19:00"
+      }
+    ]
+  },
+  {
+    "id": "37fc08bd-a10e-468c-b40a-2f9ca951d1f2",
+    "name": "sunset",
+    "address": "421 A1A Beach Blvd, St Augustine Beach, FL 32080, USA",
+    "website": "https://sunsetgrillea1a.com/contact-us/",
+    "logoUrl": "https://www.google.com/s2/favicons?domain=sunsetgrillea1a.com&sz=128",
+    "latitude": 29.8545046,
+    "longitude": -81.2676502,
+    "createdAt": "2026-05-14T02:34:51.650Z",
+    "specials": [
+      {
+        "id": "162c6675-a584-4af7-94de-0e9b00c09181",
+        "title": "Test",
+        "description": "test",
+        "days": [
+          "Wednesday"
+        ],
+        "allDay": true,
+        "startTime": null,
+        "endTime": null
       }
     ]
   }

@@ -6,8 +6,10 @@ import { redirect } from "next/navigation";
 import {
   addRestaurant,
   deleteRestaurant as deleteRestaurantRecord,
+  getRestaurants,
   updateRestaurant as updateRestaurantRecord,
 } from "@/lib/data";
+import { geocodeAddressForMap } from "@/lib/geocode";
 import {
   WEEKDAYS,
   type HappyHourSpecial,
@@ -74,20 +76,55 @@ function buildSpecial(formData: FormData, existingSpecial?: HappyHourSpecial) {
   };
 }
 
+async function coordinatesForAddress(
+  address: string,
+  previous?: {
+    address: string;
+    latitude: number | null;
+    longitude: number | null;
+  },
+) {
+  const next = address.trim();
+  if (!next) {
+    return { latitude: null as number | null, longitude: null as number | null };
+  }
+
+  if (
+    previous &&
+    next === previous.address.trim() &&
+    previous.latitude !== null &&
+    previous.longitude !== null
+  ) {
+    return {
+      latitude: previous.latitude,
+      longitude: previous.longitude,
+    };
+  }
+
+  const coords = await geocodeAddressForMap(next);
+  return {
+    latitude: coords?.latitude ?? null,
+    longitude: coords?.longitude ?? null,
+  };
+}
+
 export async function createRestaurant(formData: FormData) {
   const name = requiredString(formData, "name");
   const website = normalizeWebsiteUrl(requiredString(formData, "website"));
   const manualAddress = optionalString(formData, "address");
   const manualLogoUrl = optionalString(formData, "logoUrl");
+  const address = manualAddress ?? "";
+
+  const { latitude, longitude } = await coordinatesForAddress(address);
 
   const restaurant: Restaurant = {
     id: crypto.randomUUID(),
     name,
-    address: manualAddress ?? "",
+    address,
     website,
     logoUrl: manualLogoUrl ?? getFaviconUrl(website),
-    latitude: null,
-    longitude: null,
+    latitude,
+    longitude,
     createdAt: new Date().toISOString(),
     specials: [buildSpecial(formData)],
   };
@@ -102,13 +139,28 @@ export async function updateRestaurant(formData: FormData) {
   const website = normalizeWebsiteUrl(requiredString(formData, "website"));
   const manualAddress = optionalString(formData, "address");
   const manualLogoUrl = optionalString(formData, "logoUrl");
+  const address = manualAddress ?? "";
+
+  const restaurants = await getRestaurants();
+  const existing = restaurants.find((restaurant) => restaurant.id === id);
+  if (!existing) {
+    throw new Error("Restaurant not found");
+  }
+
+  const { latitude, longitude } = await coordinatesForAddress(address, {
+    address: existing.address,
+    latitude: existing.latitude,
+    longitude: existing.longitude,
+  });
 
   await updateRestaurantRecord(id, (restaurant) => ({
     ...restaurant,
     name,
-    address: manualAddress ?? "",
+    address,
     website,
     logoUrl: manualLogoUrl ?? getFaviconUrl(website),
+    latitude,
+    longitude,
     specials: [
       buildSpecial(formData, restaurant.specials[0]),
       ...restaurant.specials.slice(1),

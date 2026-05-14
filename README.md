@@ -38,7 +38,8 @@ NEXT_PUBLIC_MAP_CENTER_LNG=-81.3124
 
 ## Production notes
 
-The local JSON store is intentionally simple. Before launching publicly, replace
-`src/lib/data.ts` with a hosted database such as Postgres via Neon, Supabase, or
-Prisma. A future geocoding step can convert user-entered addresses into map
-coordinates.
+See **[DEPLOYMENT.md](./DEPLOYMENT.md)** for a full pre-launch checklist (database
+migration, env vars, Nominatim policy, abuse controls, and smoke tests).
+
+The local JSON store is intentionally simple; serverless hosts should not rely
+on writable `data/restaurants.json` as the long-term source of truth.
