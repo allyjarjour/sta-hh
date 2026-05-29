@@ -10,7 +10,6 @@ import {
   Title,
 } from "@mantine/core";
 
-import { deleteRestaurant } from "@/app/actions";
 import { DeleteRestaurantButton } from "@/components/DeleteRestaurantButton";
 import { RestaurantEditForm } from "@/components/RestaurantEditForm";
 import type { Restaurant, Weekday } from "@/lib/types";
@@ -43,10 +42,12 @@ export function RestaurantList({
   restaurants,
   weekdayFilter = null,
   noMatchesForFilter = false,
+  isAuthenticated = false,
 }: {
   restaurants: Restaurant[];
   weekdayFilter?: Weekday | null;
   noMatchesForFilter?: boolean;
+  isAuthenticated?: boolean;
 }) {
   if (noMatchesForFilter && weekdayFilter) {
     return (
@@ -117,14 +118,12 @@ export function RestaurantList({
                     >
                       Website
                     </Button>
-                    <form action={deleteRestaurant}>
-                      <input
-                        name="restaurantId"
-                        type="hidden"
-                        value={restaurant.id}
+                    {isAuthenticated ? (
+                      <DeleteRestaurantButton
+                        restaurantId={restaurant.id}
+                        name={restaurant.name}
                       />
-                      <DeleteRestaurantButton name={restaurant.name} />
-                    </form>
+                    ) : null}
                   </Group>
                 </Group>
 
@@ -147,17 +146,19 @@ export function RestaurantList({
                   ))}
                 </Stack>
 
-                <Paper bg="orange.0" p="md" radius="lg" withBorder>
-                  <details>
-                    <summary className="cursor-pointer">
-                      <Text c="orange" component="span" fw={700} size="sm">
-                        Edit restaurant
-                      </Text>
-                    </summary>
+                {isAuthenticated ? (
+                  <Paper bg="orange.0" p="md" radius="lg" withBorder>
+                    <details>
+                      <summary className="cursor-pointer">
+                        <Text c="orange" component="span" fw={700} size="sm">
+                          Edit restaurant
+                        </Text>
+                      </summary>
 
-                    <RestaurantEditForm restaurant={restaurant} />
-                  </details>
-                </Paper>
+                      <RestaurantEditForm restaurant={restaurant} />
+                    </details>
+                  </Paper>
+                ) : null}
               </Stack>
             </Group>
           </Card>

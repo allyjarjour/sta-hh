@@ -10,6 +10,7 @@ import {
   updateRestaurant as updateRestaurantRecord,
 } from "@/lib/data";
 import type { ActionResult } from "@/lib/action-result";
+import { requireAuthUser } from "@/lib/auth";
 import { geocodeAddressForMap } from "@/lib/geocode";
 import {
   WEEKDAYS,
@@ -127,7 +128,17 @@ async function coordinatesForAddress(
   return { ok: false, message: outcome.message };
 }
 
+const signInRequired: ActionResult = {
+  ok: false,
+  message: "Sign in to manage restaurants.",
+};
+
 export async function createRestaurant(formData: FormData): Promise<ActionResult> {
+  const user = await requireAuthUser();
+  if (!user) {
+    return signInRequired;
+  }
+
   try {
     const name = requiredString(formData, "name");
     const website = parsePublicHttpUrl(requiredString(formData, "website"), "Website");
@@ -155,7 +166,7 @@ export async function createRestaurant(formData: FormData): Promise<ActionResult
       specials: [buildSpecial(formData)],
     };
 
-    await addRestaurant(restaurant);
+    await addRestaurant(restaurant, user.id);
     revalidatePath("/");
     return { ok: true };
   } catch (error) {
@@ -168,6 +179,11 @@ export async function createRestaurant(formData: FormData): Promise<ActionResult
 }
 
 export async function updateRestaurant(formData: FormData): Promise<ActionResult> {
+  const user = await requireAuthUser();
+  if (!user) {
+    return signInRequired;
+  }
+
   try {
     const id = restaurantId(formData);
     const name = requiredString(formData, "name");
@@ -219,8 +235,21 @@ export async function updateRestaurant(formData: FormData): Promise<ActionResult
   redirect("/");
 }
 
-export async function deleteRestaurant(formData: FormData) {
-  await deleteRestaurantRecord(restaurantId(formData));
-  revalidatePath("/");
-  redirect("/");
+export async function deleteRestaurant(formData: FormData): Promise<ActionResult> {
+  const user = await requireAuthUser();
+  if (!user) {
+    return signInRequired;
+  }
+
+  try {
+    await deleteRestaurantRecord(restaurantId(formData));
+    revalidatePath("/");
+    return { ok: true };
+  } catch (error) {
+    return {
+      ok: false,
+      message:
+        error instanceof Error ? error.message : "Could not delete restaurant.",
+    };
+  }
 }

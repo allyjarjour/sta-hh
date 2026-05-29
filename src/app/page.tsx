@@ -12,16 +12,20 @@ import {
   Title,
 } from "@mantine/core";
 
+import { AuthHeader } from "@/components/AuthHeader";
 import { HappyHourLogo } from "@/components/HappyHourLogo";
 import { RestaurantForm } from "@/components/RestaurantForm";
+import { SignInPrompt } from "@/components/SignInPrompt";
 import { SpecialsBrowseSection } from "@/components/SpecialsBrowseSection";
+import { getAuthUser } from "@/lib/auth";
 import { getRestaurants } from "@/lib/data";
 import { getWebsiteDomain } from "@/lib/logo";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const restaurants = await getRestaurants();
+  const [restaurants, user] = await Promise.all([getRestaurants(), getAuthUser()]);
+  const isAuthenticated = Boolean(user);
   const totalSpecials = restaurants.reduce(
     (count, restaurant) => count + restaurant.specials.length,
     0,
@@ -34,8 +38,9 @@ export default async function Home() {
     <AppShell header={{ height: 72 }} padding="md">
       <AppShellHeader withBorder={false}>
         <Container size="xl" h="100%">
-          <Group h="100%">
+          <Group h="100%" justify="space-between" wrap="nowrap">
             <HappyHourLogo showWordmark size={44} />
+            <AuthHeader />
           </Group>
         </Container>
       </AppShellHeader>
@@ -78,10 +83,13 @@ export default async function Home() {
                 </SimpleGrid>
               </Stack>
 
-              <RestaurantForm />
+              {isAuthenticated ? <RestaurantForm /> : <SignInPrompt />}
             </SimpleGrid>
 
-            <SpecialsBrowseSection restaurants={restaurants} />
+            <SpecialsBrowseSection
+              restaurants={restaurants}
+              isAuthenticated={isAuthenticated}
+            />
           </Stack>
         </Container>
       </AppShellMain>

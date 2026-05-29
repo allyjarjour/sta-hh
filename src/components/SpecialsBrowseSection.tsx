@@ -11,8 +11,10 @@ const ALL_DAYS = "all" as const;
 
 export function SpecialsBrowseSection({
   restaurants,
+  isAuthenticated = false,
 }: {
   restaurants: Restaurant[];
+  isAuthenticated?: boolean;
 }) {
   const [dayValue, setDayValue] = useState<string>(ALL_DAYS);
 
@@ -70,6 +72,7 @@ export function SpecialsBrowseSection({
         restaurants={listRestaurants}
         weekdayFilter={weekdayFilter}
         noMatchesForFilter={noMatchesForFilter}
+        isAuthenticated={isAuthenticated}
       />
     </Stack>
   );

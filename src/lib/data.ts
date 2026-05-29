@@ -1,37 +1,80 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
-import path from "node:path";
-
+import { createClient } from "@/lib/supabase/server";
+import {
+  mapRestaurantRow,
+  specialToInsert,
+  type RestaurantRow,
+} from "@/lib/supabase/types";
 import type { Restaurant } from "@/lib/types";
 
-const dataFile = path.join(process.cwd(), "data", "restaurants.json");
-
-async function ensureDataFile() {
-  await mkdir(path.dirname(dataFile), { recursive: true });
-
-  try {
-    await readFile(dataFile, "utf8");
-  } catch {
-    await writeFile(dataFile, "[]\n", "utf8");
-  }
-}
+const restaurantSelect = `
+  id,
+  name,
+  address,
+  website,
+  logo_url,
+  latitude,
+  longitude,
+  created_at,
+  created_by,
+  specials (
+    id,
+    restaurant_id,
+    title,
+    description,
+    days,
+    all_day,
+    start_time,
+    end_time
+  )
+`;
 
 export async function getRestaurants(): Promise<Restaurant[]> {
-  await ensureDataFile();
+  const supabase = await createClient();
 
-  const contents = await readFile(dataFile, "utf8");
-  const parsed = JSON.parse(contents) as Restaurant[];
+  const { data, error } = await supabase
+    .from("restaurants")
+    .select(restaurantSelect)
+    .order("name", { ascending: true });
 
-  return parsed.sort((a, b) => a.name.localeCompare(b.name));
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return ((data ?? []) as RestaurantRow[]).map(mapRestaurantRow);
 }
 
-export async function addRestaurant(restaurant: Restaurant) {
-  const restaurants = await getRestaurants();
+export async function addRestaurant(restaurant: Restaurant, createdBy?: string) {
+  const supabase = await createClient();
 
-  await writeFile(
-    dataFile,
-    `${JSON.stringify([restaurant, ...restaurants], null, 2)}\n`,
-    "utf8",
-  );
+  const { error: restaurantError } = await supabase.from("restaurants").insert({
+    id: restaurant.id,
+    name: restaurant.name,
+    address: restaurant.address,
+    website: restaurant.website,
+    logo_url: restaurant.logoUrl,
+    latitude: restaurant.latitude,
+    longitude: restaurant.longitude,
+    created_at: restaurant.createdAt,
+    created_by: createdBy ?? null,
+  });
+
+  if (restaurantError) {
+    throw new Error(restaurantError.message);
+  }
+
+  if (restaurant.specials.length > 0) {
+    const { error: specialsError } = await supabase
+      .from("specials")
+      .insert(
+        restaurant.specials.map((special) =>
+          specialToInsert(special, restaurant.id),
+        ),
+      );
+
+    if (specialsError) {
+      throw new Error(specialsError.message);
+    }
+  }
 }
 
 export async function updateRestaurant(
@@ -39,26 +82,59 @@ export async function updateRestaurant(
   update: (restaurant: Restaurant) => Restaurant,
 ) {
   const restaurants = await getRestaurants();
-  const updatedRestaurants = restaurants.map((restaurant) =>
-    restaurant.id === id ? update(restaurant) : restaurant,
-  );
+  const existing = restaurants.find((restaurant) => restaurant.id === id);
 
-  await writeFile(
-    dataFile,
-    `${JSON.stringify(updatedRestaurants, null, 2)}\n`,
-    "utf8",
-  );
+  if (!existing) {
+    throw new Error("Restaurant not found");
+  }
+
+  const updated = update(existing);
+  const supabase = await createClient();
+
+  const { error: restaurantError } = await supabase
+    .from("restaurants")
+    .update({
+      name: updated.name,
+      address: updated.address,
+      website: updated.website,
+      logo_url: updated.logoUrl,
+      latitude: updated.latitude,
+      longitude: updated.longitude,
+    })
+    .eq("id", id);
+
+  if (restaurantError) {
+    throw new Error(restaurantError.message);
+  }
+
+  const { error: deleteSpecialsError } = await supabase
+    .from("specials")
+    .delete()
+    .eq("restaurant_id", id);
+
+  if (deleteSpecialsError) {
+    throw new Error(deleteSpecialsError.message);
+  }
+
+  if (updated.specials.length > 0) {
+    const { error: insertSpecialsError } = await supabase
+      .from("specials")
+      .insert(
+        updated.specials.map((special) => specialToInsert(special, id)),
+      );
+
+    if (insertSpecialsError) {
+      throw new Error(insertSpecialsError.message);
+    }
+  }
 }
 
 export async function deleteRestaurant(id: string) {
-  const restaurants = await getRestaurants();
-  const updatedRestaurants = restaurants.filter(
-    (restaurant) => restaurant.id !== id,
-  );
+  const supabase = await createClient();
 
-  await writeFile(
-    dataFile,
-    `${JSON.stringify(updatedRestaurants, null, 2)}\n`,
-    "utf8",
-  );
+  const { error } = await supabase.from("restaurants").delete().eq("id", id);
+
+  if (error) {
+    throw new Error(error.message);
+  }
 }
