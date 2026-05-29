@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
 import {
   addRestaurant,
@@ -224,6 +223,7 @@ export async function updateRestaurant(formData: FormData): Promise<ActionResult
       ],
     }));
     revalidatePath("/");
+    return { ok: true };
   } catch (error) {
     return {
       ok: false,
@@ -231,8 +231,6 @@ export async function updateRestaurant(formData: FormData): Promise<ActionResult
         error instanceof Error ? error.message : "Could not save restaurant.",
     };
   }
-
-  redirect("/");
 }
 
 export async function deleteRestaurant(formData: FormData): Promise<ActionResult> {

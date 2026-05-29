@@ -9,6 +9,7 @@ import {
   Stack,
   TextInput,
 } from "@mantine/core";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { updateRestaurant } from "@/app/actions";
@@ -42,6 +43,7 @@ function getRequiredFieldErrors(formData: FormData): FieldErrors {
 }
 
 export function RestaurantEditForm({ restaurant }: { restaurant: Restaurant }) {
+  const router = useRouter();
   const primarySpecial = restaurant.specials[0];
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [addressError, setAddressError] = useState<string | null>(null);
@@ -59,7 +61,10 @@ export function RestaurantEditForm({ restaurant }: { restaurant: Restaurant }) {
     }
   }
 
-  async function handleUpdateRestaurant(formData: FormData) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const formData = new FormData(event.currentTarget);
     const nextFieldErrors = getRequiredFieldErrors(formData);
 
     if (Object.keys(nextFieldErrors).length > 0) {
@@ -81,7 +86,10 @@ export function RestaurantEditForm({ restaurant }: { restaurant: Restaurant }) {
         }
 
         window.alert(result.message);
+        return;
       }
+
+      router.refresh();
     } finally {
       setIsSubmitting(false);
     }
@@ -92,7 +100,7 @@ export function RestaurantEditForm({ restaurant }: { restaurant: Restaurant }) {
   }
 
   return (
-    <form action={handleUpdateRestaurant} onSubmitCapture={handleSubmitCapture}>
+    <form onSubmit={handleSubmit} onSubmitCapture={handleSubmitCapture}>
       <Stack gap="md" mt="md">
         <input name="restaurantId" type="hidden" value={restaurant.id} />
 
@@ -161,7 +169,7 @@ export function RestaurantEditForm({ restaurant }: { restaurant: Restaurant }) {
         </Fieldset>
 
         <Group justify="flex-end">
-          <Anchor href={restaurant.website} target="_blank">
+          <Anchor href={restaurant.website} target="_blank" rel="noreferrer">
             Preview website
           </Anchor>
           <Button type="submit" color="dark" loading={isSubmitting}>
