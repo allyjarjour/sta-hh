@@ -2,6 +2,10 @@
 
 A site for collecting and browsing local happy-hour specials in the St. Augustine area. Anyone can browse; trusted contributors sign in to add, edit, or remove listings.
 
+https://github.com/user-attachments/assets/13b8ab32-e665-4e5e-82c9-844ff4f57e47
+
+
+
 ## Stack
 
 - **Next.js** (App Router) + TypeScript
