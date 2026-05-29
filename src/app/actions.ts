@@ -9,6 +9,7 @@ import {
   getRestaurants,
   updateRestaurant as updateRestaurantRecord,
 } from "@/lib/data";
+import type { ActionResult } from "@/lib/action-result";
 import { geocodeAddressForMap } from "@/lib/geocode";
 import {
   WEEKDAYS,
@@ -87,10 +88,13 @@ async function coordinatesForAddress(
     latitude: number | null;
     longitude: number | null;
   },
-) {
+): Promise<
+  | { ok: true; latitude: number | null; longitude: number | null }
+  | { ok: false; message: string }
+> {
   const next = address.trim();
   if (!next) {
-    return { latitude: null as number | null, longitude: null as number | null };
+    return { ok: true, latitude: null, longitude: null };
   }
 
   if (
@@ -100,79 +104,118 @@ async function coordinatesForAddress(
     previous.longitude !== null
   ) {
     return {
+      ok: true,
       latitude: previous.latitude,
       longitude: previous.longitude,
     };
   }
 
-  const coords = await geocodeAddressForMap(next);
-  return {
-    latitude: coords?.latitude ?? null,
-    longitude: coords?.longitude ?? null,
-  };
-}
+  const outcome = await geocodeAddressForMap(next);
 
-export async function createRestaurant(formData: FormData) {
-  const name = requiredString(formData, "name");
-  const website = parsePublicHttpUrl(requiredString(formData, "website"), "Website");
-  const manualAddress = optionalString(formData, "address");
-  const manualLogoUrl = optionalString(formData, "logoUrl");
-  const address = manualAddress ?? "";
-
-  const { latitude, longitude } = await coordinatesForAddress(address);
-
-  const restaurant: Restaurant = {
-    id: crypto.randomUUID(),
-    name,
-    address,
-    website,
-    logoUrl:
-      parseOptionalPublicHttpUrl(manualLogoUrl, "Logo URL") ?? getFaviconUrl(website),
-    latitude,
-    longitude,
-    createdAt: new Date().toISOString(),
-    specials: [buildSpecial(formData)],
-  };
-
-  await addRestaurant(restaurant);
-  revalidatePath("/");
-}
-
-export async function updateRestaurant(formData: FormData) {
-  const id = restaurantId(formData);
-  const name = requiredString(formData, "name");
-  const website = parsePublicHttpUrl(requiredString(formData, "website"), "Website");
-  const manualAddress = optionalString(formData, "address");
-  const manualLogoUrl = optionalString(formData, "logoUrl");
-  const address = manualAddress ?? "";
-
-  const restaurants = await getRestaurants();
-  const existing = restaurants.find((restaurant) => restaurant.id === id);
-  if (!existing) {
-    throw new Error("Restaurant not found");
+  if (outcome.status === "empty") {
+    return { ok: true, latitude: null, longitude: null };
   }
 
-  const { latitude, longitude } = await coordinatesForAddress(address, {
-    address: existing.address,
-    latitude: existing.latitude,
-    longitude: existing.longitude,
-  });
+  if (outcome.status === "ok") {
+    return {
+      ok: true,
+      latitude: outcome.latitude,
+      longitude: outcome.longitude,
+    };
+  }
 
-  await updateRestaurantRecord(id, (restaurant) => ({
-    ...restaurant,
-    name,
-    address,
-    website,
-    logoUrl:
-      parseOptionalPublicHttpUrl(manualLogoUrl, "Logo URL") ?? getFaviconUrl(website),
-    latitude,
-    longitude,
-    specials: [
-      buildSpecial(formData, restaurant.specials[0]),
-      ...restaurant.specials.slice(1),
-    ],
-  }));
-  revalidatePath("/");
+  return { ok: false, message: outcome.message };
+}
+
+export async function createRestaurant(formData: FormData): Promise<ActionResult> {
+  try {
+    const name = requiredString(formData, "name");
+    const website = parsePublicHttpUrl(requiredString(formData, "website"), "Website");
+    const manualAddress = optionalString(formData, "address");
+    const manualLogoUrl = optionalString(formData, "logoUrl");
+    const address = manualAddress ?? "";
+
+    const coords = await coordinatesForAddress(address);
+    if (!coords.ok) {
+      return { ok: false, message: coords.message, field: "address" };
+    }
+
+    const { latitude, longitude } = coords;
+
+    const restaurant: Restaurant = {
+      id: crypto.randomUUID(),
+      name,
+      address,
+      website,
+      logoUrl:
+        parseOptionalPublicHttpUrl(manualLogoUrl, "Logo URL") ?? getFaviconUrl(website),
+      latitude,
+      longitude,
+      createdAt: new Date().toISOString(),
+      specials: [buildSpecial(formData)],
+    };
+
+    await addRestaurant(restaurant);
+    revalidatePath("/");
+    return { ok: true };
+  } catch (error) {
+    return {
+      ok: false,
+      message:
+        error instanceof Error ? error.message : "Could not save restaurant.",
+    };
+  }
+}
+
+export async function updateRestaurant(formData: FormData): Promise<ActionResult> {
+  try {
+    const id = restaurantId(formData);
+    const name = requiredString(formData, "name");
+    const website = parsePublicHttpUrl(requiredString(formData, "website"), "Website");
+    const manualAddress = optionalString(formData, "address");
+    const manualLogoUrl = optionalString(formData, "logoUrl");
+    const address = manualAddress ?? "";
+
+    const restaurants = await getRestaurants();
+    const existing = restaurants.find((restaurant) => restaurant.id === id);
+    if (!existing) {
+      return { ok: false, message: "Restaurant not found." };
+    }
+
+    const coords = await coordinatesForAddress(address, {
+      address: existing.address,
+      latitude: existing.latitude,
+      longitude: existing.longitude,
+    });
+    if (!coords.ok) {
+      return { ok: false, message: coords.message, field: "address" };
+    }
+
+    const { latitude, longitude } = coords;
+
+    await updateRestaurantRecord(id, (restaurant) => ({
+      ...restaurant,
+      name,
+      address,
+      website,
+      logoUrl:
+        parseOptionalPublicHttpUrl(manualLogoUrl, "Logo URL") ?? getFaviconUrl(website),
+      latitude,
+      longitude,
+      specials: [
+        buildSpecial(formData, restaurant.specials[0]),
+        ...restaurant.specials.slice(1),
+      ],
+    }));
+    revalidatePath("/");
+  } catch (error) {
+    return {
+      ok: false,
+      message:
+        error instanceof Error ? error.message : "Could not save restaurant.",
+    };
+  }
+
   redirect("/");
 }
 

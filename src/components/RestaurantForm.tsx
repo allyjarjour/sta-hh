@@ -47,6 +47,8 @@ export function RestaurantForm() {
   const formRef = useRef<HTMLFormElement>(null);
   const [resetKey, setResetKey] = useState(0);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const [addressError, setAddressError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   function handleSubmitCapture(event: React.FormEvent<HTMLFormElement>) {
     const nextFieldErrors = getRequiredFieldErrors(
@@ -60,7 +62,11 @@ export function RestaurantForm() {
     }
   }
 
-  async function handleCreateRestaurant(formData: FormData) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
     const nextFieldErrors = getRequiredFieldErrors(formData);
 
     if (Object.keys(nextFieldErrors).length > 0) {
@@ -68,11 +74,29 @@ export function RestaurantForm() {
       return;
     }
 
-    setFieldErrors({});
-    await createRestaurant(formData);
-    formRef.current?.reset();
-    setResetKey((currentKey) => currentKey + 1);
-    router.refresh();
+    setIsSubmitting(true);
+
+    try {
+      const result = await createRestaurant(formData);
+      if (!result.ok) {
+        if (result.field === "address") {
+          setAddressError(result.message);
+          window.alert(result.message);
+          return;
+        }
+
+        window.alert(result.message);
+        return;
+      }
+
+      setFieldErrors({});
+      setAddressError(null);
+      form.reset();
+      setResetKey((currentKey) => currentKey + 1);
+      router.refresh();
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   function clearFieldError(field: RequiredField) {
@@ -83,7 +107,7 @@ export function RestaurantForm() {
     <Paper p="xl" radius="xl" shadow="md" withBorder>
       <form
         ref={formRef}
-        action={handleCreateRestaurant}
+        onSubmit={handleSubmit}
         onSubmitCapture={handleSubmitCapture}
       >
         <Stack gap="md">
@@ -115,7 +139,14 @@ export function RestaurantForm() {
             />
           </SimpleGrid>
 
-          <TextInput name="address" label="Address" placeholder="Optional" />
+          <TextInput
+            name="address"
+            label="Address"
+            placeholder="St. Johns County street address"
+            description="Only St. Johns County, FL locations are supported."
+            error={addressError}
+            onChange={() => setAddressError(null)}
+          />
 
           <TextInput
             name="logoUrl"
@@ -150,8 +181,13 @@ export function RestaurantForm() {
             </Stack>
           </Fieldset>
 
-          <Button type="submit" size="md" color="dark">
-            Add happy hour
+          <Button
+            type="submit"
+            size="md"
+            color="dark"
+            loading={isSubmitting}
+          >
+            {isSubmitting ? "Adding…" : "Add happy hour"}
           </Button>
         </Stack>
       </form>

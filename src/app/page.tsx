@@ -12,6 +12,7 @@ import {
   Title,
 } from "@mantine/core";
 
+import { HappyHourLogo } from "@/components/HappyHourLogo";
 import { RestaurantForm } from "@/components/RestaurantForm";
 import { SpecialsBrowseSection } from "@/components/SpecialsBrowseSection";
 import { getRestaurants } from "@/lib/data";
@@ -33,23 +34,8 @@ export default async function Home() {
     <AppShell header={{ height: 72 }} padding="md">
       <AppShellHeader withBorder={false}>
         <Container size="xl" h="100%">
-          <Group h="100%" justify="space-between">
-            <Group gap="sm">
-              <Badge color="orange" size="lg" variant="light">
-                HH
-              </Badge>
-              <Text fw={800} size="lg">
-                Happy Hour Town
-              </Text>
-            </Group>
-            <Group gap="xs" visibleFrom="sm">
-              <Badge color="orange" variant="light">
-                St. Augustine
-              </Badge>
-              <Badge color="dark" variant="light">
-                {uniqueRestaurantCount} restaurants
-              </Badge>
-            </Group>
+          <Group h="100%">
+            <HappyHourLogo showWordmark size={44} />
           </Group>
         </Container>
       </AppShellHeader>

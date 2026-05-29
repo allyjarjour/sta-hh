@@ -1,4 +1,4 @@
-# Happy Hour Town
+# STA Happy Hour
 
 A starter website for collecting local restaurant happy-hour specials.
 

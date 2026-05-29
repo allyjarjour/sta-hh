@@ -44,6 +44,8 @@ function getRequiredFieldErrors(formData: FormData): FieldErrors {
 export function RestaurantEditForm({ restaurant }: { restaurant: Restaurant }) {
   const primarySpecial = restaurant.specials[0];
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const [addressError, setAddressError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   function handleSubmitCapture(event: React.FormEvent<HTMLFormElement>) {
     const nextFieldErrors = getRequiredFieldErrors(
@@ -66,7 +68,23 @@ export function RestaurantEditForm({ restaurant }: { restaurant: Restaurant }) {
     }
 
     setFieldErrors({});
-    await updateRestaurant(formData);
+    setAddressError(null);
+    setIsSubmitting(true);
+
+    try {
+      const result = await updateRestaurant(formData);
+      if (!result.ok) {
+        if (result.field === "address") {
+          setAddressError(result.message);
+          window.alert(result.message);
+          return;
+        }
+
+        window.alert(result.message);
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   function clearFieldError(field: RequiredField) {
@@ -101,7 +119,9 @@ export function RestaurantEditForm({ restaurant }: { restaurant: Restaurant }) {
           label="Address"
           name="address"
           defaultValue={restaurant.address}
-          placeholder="Optional"
+          description="Only St. Johns County, FL locations are supported."
+          error={addressError}
+          onChange={() => setAddressError(null)}
         />
 
         <TextInput
@@ -144,8 +164,8 @@ export function RestaurantEditForm({ restaurant }: { restaurant: Restaurant }) {
           <Anchor href={restaurant.website} target="_blank">
             Preview website
           </Anchor>
-          <Button type="submit" color="dark">
-            Save changes
+          <Button type="submit" color="dark" loading={isSubmitting}>
+            {isSubmitting ? "Saving…" : "Save changes"}
           </Button>
         </Group>
       </Stack>

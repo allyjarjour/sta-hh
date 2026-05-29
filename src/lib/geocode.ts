@@ -3,18 +3,26 @@
  * @see https://operations.osmfoundation.org/policies/nominatim/
  */
 
+import {
+  ADDRESS_NOT_VERIFIED_IN_COUNTY_MESSAGE,
+  OUTSIDE_ST_JOHNS_COUNTY_MESSAGE,
+  type NominatimGeocodeHit,
+  isStJohnsCountyHit,
+} from "@/lib/st-johns-county";
+
 const NOMINATIM_SEARCH = "https://nominatim.openstreetmap.org/search";
 const CACHE_MAX = 200;
 /** OSMF policy: at most ~1 request/s to the public instance. */
 const NOMINATIM_MIN_INTERVAL_MS = 1100;
 
-const resultCache = new Map<string, { latitude: number; longitude: number } | null>();
-let lastNominatimRequestEnd = 0;
+export type GeocodeOutcome =
+  | { status: "empty" }
+  | { status: "ok"; latitude: number; longitude: number }
+  | { status: "outside_county"; message: string }
+  | { status: "not_verified"; message: string };
 
-type NominatimSearchHit = {
-  lat?: string;
-  lon?: string;
-};
+const resultCache = new Map<string, GeocodeOutcome>();
+let lastNominatimRequestEnd = 0;
 
 function nominatimUserAgent(): string {
   const fromEnv = process.env.NOMINATIM_USER_AGENT?.trim();
@@ -34,10 +42,7 @@ function regionSuffix(): string {
   return ", St. Augustine, FL, USA";
 }
 
-function cacheResult(
-  key: string,
-  value: { latitude: number; longitude: number } | null,
-) {
+function cacheResult(key: string, value: GeocodeOutcome) {
   if (resultCache.size >= CACHE_MAX) {
     const firstKey = resultCache.keys().next().value;
     if (firstKey !== undefined) {
@@ -99,14 +104,31 @@ function geocodeQueryAttempts(trimmed: string): string[] {
   ]);
 }
 
-async function nominatimSearchOnce(
-  query: string,
-): Promise<{ latitude: number; longitude: number } | null> {
+function outcomeFromHits(hits: NominatimGeocodeHit[]): GeocodeOutcome {
+  const inCounty = hits.find((hit) => isStJohnsCountyHit(hit));
+
+  if (inCounty) {
+    const lat = inCounty.lat != null ? Number.parseFloat(inCounty.lat) : Number.NaN;
+    const lon = inCounty.lon != null ? Number.parseFloat(inCounty.lon) : Number.NaN;
+
+    if (Number.isFinite(lat) && Number.isFinite(lon)) {
+      return { status: "ok", latitude: lat, longitude: lon };
+    }
+  }
+
+  if (hits.length > 0) {
+    return { status: "outside_county", message: OUTSIDE_ST_JOHNS_COUNTY_MESSAGE };
+  }
+
+  return { status: "not_verified", message: ADDRESS_NOT_VERIFIED_IN_COUNTY_MESSAGE };
+}
+
+async function nominatimSearchOnce(query: string): Promise<GeocodeOutcome> {
   const cacheKey = query.toLowerCase();
 
   if (resultCache.has(cacheKey)) {
     const hit = resultCache.get(cacheKey);
-    return hit ? { ...hit } : null;
+    return hit ?? { status: "not_verified", message: ADDRESS_NOT_VERIFIED_IN_COUNTY_MESSAGE };
   }
 
   const gap = Date.now() - lastNominatimRequestEnd;
@@ -119,7 +141,9 @@ async function nominatimSearchOnce(
   const url = new URL(NOMINATIM_SEARCH);
   url.searchParams.set("q", query);
   url.searchParams.set("format", "json");
-  url.searchParams.set("limit", "1");
+  url.searchParams.set("addressdetails", "1");
+  url.searchParams.set("limit", "5");
+  url.searchParams.set("countrycodes", "us");
 
   let response: Response;
 
@@ -133,15 +157,23 @@ async function nominatimSearchOnce(
     });
   } catch {
     lastNominatimRequestEnd = Date.now();
-    cacheResult(cacheKey, null);
-    return null;
+    const outcome: GeocodeOutcome = {
+      status: "not_verified",
+      message: ADDRESS_NOT_VERIFIED_IN_COUNTY_MESSAGE,
+    };
+    cacheResult(cacheKey, outcome);
+    return outcome;
   }
 
   lastNominatimRequestEnd = Date.now();
 
   if (!response.ok) {
-    cacheResult(cacheKey, null);
-    return null;
+    const outcome: GeocodeOutcome = {
+      status: "not_verified",
+      message: ADDRESS_NOT_VERIFIED_IN_COUNTY_MESSAGE,
+    };
+    cacheResult(cacheKey, outcome);
+    return outcome;
   }
 
   let data: unknown;
@@ -149,47 +181,50 @@ async function nominatimSearchOnce(
   try {
     data = await response.json();
   } catch {
-    cacheResult(cacheKey, null);
-    return null;
+    const outcome: GeocodeOutcome = {
+      status: "not_verified",
+      message: ADDRESS_NOT_VERIFIED_IN_COUNTY_MESSAGE,
+    };
+    cacheResult(cacheKey, outcome);
+    return outcome;
   }
 
   if (!Array.isArray(data) || data.length === 0) {
-    cacheResult(cacheKey, null);
-    return null;
+    const outcome: GeocodeOutcome = {
+      status: "not_verified",
+      message: ADDRESS_NOT_VERIFIED_IN_COUNTY_MESSAGE,
+    };
+    cacheResult(cacheKey, outcome);
+    return outcome;
   }
 
-  const first = data[0] as NominatimSearchHit;
-  const lat = first.lat != null ? Number.parseFloat(first.lat) : Number.NaN;
-  const lon = first.lon != null ? Number.parseFloat(first.lon) : Number.NaN;
-
-  if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
-    cacheResult(cacheKey, null);
-    return null;
-  }
-
-  const coords = { latitude: lat, longitude: lon };
-  cacheResult(cacheKey, coords);
-  return coords;
+  const outcome = outcomeFromHits(data as NominatimGeocodeHit[]);
+  cacheResult(cacheKey, outcome);
+  return outcome;
 }
 
 /**
- * Returns coordinates for a free-form address, biased to the local region.
- * Empty or failed lookups return null (best-effort; callers persist nulls).
+ * Geocodes a free-form address and ensures it resolves within St. Johns County, FL.
+ * Empty input skips geocoding (no map pin).
  */
 export async function geocodeAddressForMap(
   freeformAddress: string,
-): Promise<{ latitude: number; longitude: number } | null> {
+): Promise<GeocodeOutcome> {
   const trimmed = freeformAddress.trim();
   if (!trimmed) {
-    return null;
+    return { status: "empty" };
   }
 
   for (const query of geocodeQueryAttempts(trimmed)) {
-    const coords = await nominatimSearchOnce(query);
-    if (coords) {
-      return coords;
+    const outcome = await nominatimSearchOnce(query);
+
+    if (outcome.status === "ok" || outcome.status === "outside_county") {
+      return outcome;
     }
   }
 
-  return null;
+  return {
+    status: "not_verified",
+    message: ADDRESS_NOT_VERIFIED_IN_COUNTY_MESSAGE,
+  };
 }

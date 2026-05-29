@@ -2,11 +2,11 @@
   {
     "id": "81878b66-0e56-437e-a740-b081bbef6e62",
     "name": "Back 40 A1A",
-    "address": "6101 A1A S Unit 111, St. Augustine, FL 32080",
+    "address": "6101 A1A S Unit 111, St. Augustine, FL 12345",
     "website": "https://www.back40a1a.com",
     "logoUrl": "https://www.google.com/s2/favicons?domain=www.back40a1a.com&sz=128",
-    "latitude": 29.8611867,
-    "longitude": -81.2780349,
+    "latitude": 29.8994054,
+    "longitude": -81.3145068,
     "createdAt": "2026-05-14T02:02:57.532Z",
     "specials": [
       {
