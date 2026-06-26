@@ -23,7 +23,7 @@ Seed data lives in [`data/restaurants.json`](data/restaurants.json) for import o
 
 1. Create a [Supabase](https://supabase.com) project and run [`supabase/migrations/001_initial.sql`](supabase/migrations/001_initial.sql) in the SQL editor.
 2. Copy [`.env.example`](.env.example) to `.env.local` and fill in Supabase URL and publishable (anon) key.
-3. Create at least one user in Supabase → **Authentication → Users → Add user** (there is no public sign-up UI).
+3. Enable **Email** sign-up in Supabase (Authentication → Providers → **Allow new users to sign up**) and add `http://localhost:3000/auth/callback` under **URL configuration → Redirect URLs**.
 4. Optional: import seed restaurants:
 
    ```bash
@@ -37,7 +37,7 @@ Seed data lives in [`data/restaurants.json`](data/restaurants.json) for import o
    npm run dev
    ```
 
-Open [http://localhost:3000](http://localhost:3000). Sign in at [http://localhost:3000/login](http://localhost:3000/login).
+Open [http://localhost:3000](http://localhost:3000). Sign in or create an account at [http://localhost:3000/login](http://localhost:3000/login).
 
 ### Environment variables
 
@@ -60,7 +60,8 @@ See [`.env.example`](.env.example) for the full list.
 
 ## Auth
 
-- The app exposes **sign in** only (`/login`). New accounts are created in the **Supabase dashboard** (or by enabling sign-up in Supabase and adding UI later).
+- Contributors **sign up or sign in** at `/login` with email and password.
+- If Supabase **Confirm email** is enabled, new users must click the link in their inbox before signing in.
 - v1 policy: any authenticated user can edit any restaurant (no per-owner rows yet).
 
 ## Restaurant details

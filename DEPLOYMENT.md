@@ -10,9 +10,13 @@ Persistence and authentication use **Supabase Postgres** and **Supabase Auth**. 
 
 1. Create a [Supabase](https://supabase.com) project.
 2. Run `supabase/migrations/001_initial.sql` in the SQL editor (or `supabase db push` if you use the CLI).
-3. Enable **Email** provider under Authentication → Providers.
-4. Create at least one user (Authentication → Users → Add user) for contributors who will add/edit listings.
+3. Enable **Email** provider under Authentication → Providers and turn on **Allow new users to sign up**.
+4. Under **Authentication → URL configuration**, set Site URL (e.g. `http://localhost:3000` for dev) and add redirect URLs:
+   - `http://localhost:3000/auth/callback`
+   - `https://your-production-domain/auth/callback`
 5. Import seed data (optional): with env vars set locally, run `npm run migrate:json` to load [`data/restaurants.json`](data/restaurants.json). The JSON file is a backup/seed only; production reads from Postgres.
+
+Contributors can **sign up at `/login`** or you can still invite users manually from Authentication → Users.
 
 ### Row Level Security (RLS)
 
@@ -85,7 +89,7 @@ Browsers load **OSM tiles** and **Leaflet** from `RestaurantMap`; adjust CSP if 
 
 - [ ] Home loads without signing in; list and map show data from Supabase.
 - [ ] Anonymous user does **not** see add form, edit panel, or delete buttons.
-- [ ] Sign in at `/login` → header shows email and sign out.
+- [ ] Sign up at `/login` (or sign in) → header shows email and sign out.
 - [ ] Signed-in user can add a restaurant → appears after refresh; map pin when geocoded.
 - [ ] Edit and delete work when signed in; sign out blocks further writes.
 - [ ] Production `NOMINATIM_USER_AGENT` set; geocoding returns coords for a known-good address.

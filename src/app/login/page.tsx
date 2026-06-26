@@ -1,9 +1,11 @@
+import { Suspense } from "react";
+
 import { AppShell, AppShellMain, Container } from "@mantine/core";
 
 import { LoginForm } from "@/app/login/LoginForm";
 
 export const metadata = {
-  title: "Sign in — STA Happy Hour",
+  title: "Account — STA Happy Hour",
 };
 
 export default function LoginPage() {
@@ -11,7 +13,9 @@ export default function LoginPage() {
     <AppShell padding="md">
       <AppShellMain>
         <Container size="sm" py={{ base: "xl", md: 64 }}>
-          <LoginForm />
+          <Suspense>
+            <LoginForm />
+          </Suspense>
         </Container>
       </AppShellMain>
     </AppShell>

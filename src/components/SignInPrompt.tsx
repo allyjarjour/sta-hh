@@ -18,7 +18,7 @@ export function SignInPrompt() {
         <Text c="dimmed">
           Anyone can browse happy hours. To list or edit participating spots,{" "}
           <Anchor component={Link} href="/login" fw={600}>
-            sign in
+            sign in or create an account
           </Anchor>
           .
         </Text>
