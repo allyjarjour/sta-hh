@@ -8,9 +8,6 @@ import { Providers } from "@/app/providers";
 export const metadata: Metadata = {
   title: "STA Happy Hour",
   description: "Find local happy hour specials near you.",
-  icons: {
-    icon: "/icon.svg",
-  },
 };
 
 export default function RootLayout({
