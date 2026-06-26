@@ -21,7 +21,10 @@ Seed data lives in [`data/restaurants.json`](data/restaurants.json) for import o
 
 ## Run locally
 
-1. Create a [Supabase](https://supabase.com) project and run [`supabase/migrations/001_initial.sql`](supabase/migrations/001_initial.sql) in the SQL editor.
+1. Create a [Supabase](https://supabase.com) project and run these migrations in the SQL editor:
+   - [`supabase/migrations/001_initial.sql`](supabase/migrations/001_initial.sql)
+   - [`supabase/migrations/002_profiles.sql`](supabase/migrations/002_profiles.sql)
+   - [`supabase/migrations/003_restaurant_edits.sql`](supabase/migrations/003_restaurant_edits.sql)
 2. Copy [`.env.example`](.env.example) to `.env.local` and fill in Supabase URL and publishable (anon) key.
 3. Enable **Email** sign-up in Supabase (Authentication → Providers → **Allow new users to sign up**) and add `http://localhost:3000/auth/callback` under **URL configuration → Redirect URLs**.
 4. Optional: import seed restaurants:
@@ -57,10 +60,13 @@ See [`.env.example`](.env.example) for the full list.
 - **Contribute** — Signed-in users can add restaurants, edit specials, and delete entries (UI + server actions + RLS).
 - **Geocoding** — Optional address on add/edit; validated to St. Johns County when coordinates are resolved.
 - **Logos** — Derived from the restaurant website favicon unless a logo URL override is provided.
+- **Profiles** — Contributors have a display name and optional avatar URL (`/settings`); shown in the header and as “Added by …” on listings they create.
+- **Edit history** — Listings show who last edited a restaurant and when, after the first save.
 
 ## Auth
 
 - Contributors **sign up or sign in** at `/login` with email and password.
+- Edit **display name and avatar** at `/settings` (avatar is an optional public HTTPS image URL).
 - If Supabase **Confirm email** is enabled, new users must click the link in their inbox before signing in.
 - v1 policy: any authenticated user can edit any restaurant (no per-owner rows yet).
 

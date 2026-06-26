@@ -1,3 +1,3 @@
 export type ActionResult =
   | { ok: true }
-  | { ok: false; message: string; field?: "address" };
+  | { ok: false; message: string; field?: "address" | "displayName" | "avatarUrl" };

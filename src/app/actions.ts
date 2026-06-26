@@ -162,6 +162,9 @@ export async function createRestaurant(formData: FormData): Promise<ActionResult
       latitude,
       longitude,
       createdAt: new Date().toISOString(),
+      createdBy: user.id,
+      updatedAt: null,
+      updatedBy: null,
       specials: [buildSpecial(formData)],
     };
 
@@ -208,20 +211,24 @@ export async function updateRestaurant(formData: FormData): Promise<ActionResult
 
     const { latitude, longitude } = coords;
 
-    await updateRestaurantRecord(id, (restaurant) => ({
-      ...restaurant,
-      name,
-      address,
-      website,
-      logoUrl:
-        parseOptionalPublicHttpUrl(manualLogoUrl, "Logo URL") ?? getFaviconUrl(website),
-      latitude,
-      longitude,
-      specials: [
-        buildSpecial(formData, restaurant.specials[0]),
-        ...restaurant.specials.slice(1),
-      ],
-    }));
+    await updateRestaurantRecord(
+      id,
+      (restaurant) => ({
+        ...restaurant,
+        name,
+        address,
+        website,
+        logoUrl:
+          parseOptionalPublicHttpUrl(manualLogoUrl, "Logo URL") ?? getFaviconUrl(website),
+        latitude,
+        longitude,
+        specials: [
+          buildSpecial(formData, restaurant.specials[0]),
+          ...restaurant.specials.slice(1),
+        ],
+      }),
+      user.id,
+    );
     revalidatePath("/");
     return { ok: true };
   } catch (error) {

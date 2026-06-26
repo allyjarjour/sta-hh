@@ -12,6 +12,7 @@ import {
 
 import { DeleteRestaurantButton } from "@/components/DeleteRestaurantButton";
 import { RestaurantEditForm } from "@/components/RestaurantEditForm";
+import { profileInitials, formatListingTimestamp } from "@/lib/profile-display";
 import type { Restaurant, Weekday } from "@/lib/types";
 
 function formatTime(value: string) {
@@ -103,6 +104,58 @@ export function RestaurantList({
                       <Text c="dimmed" size="sm" mt={4}>
                         {restaurant.address}
                       </Text>
+                    ) : null}
+                    {restaurant.contributor ? (
+                      <Group gap="xs" mt="sm">
+                        <Avatar
+                          color="orange"
+                          radius="xl"
+                          size={24}
+                          src={restaurant.contributor.avatarUrl}
+                        >
+                          {profileInitials(restaurant.contributor.displayName)}
+                        </Avatar>
+                        <Text c="dimmed" size="sm">
+                          Added by{" "}
+                          <Text component="span" fw={600} inherit>
+                            {restaurant.contributor.displayName}
+                          </Text>{" "}
+                          on{" "}
+                          <Text component="span" fw={600} inherit>
+                            {formatListingTimestamp(restaurant.createdAt)}
+                          </Text>
+                        </Text>
+                      </Group>
+                    ) : null}
+                    {restaurant.updatedAt ? (
+                      <Group gap="xs" mt={restaurant.contributor ? 4 : "sm"}>
+                        {restaurant.editor ? (
+                          <Avatar
+                            color="gray"
+                            radius="xl"
+                            size={24}
+                            src={restaurant.editor.avatarUrl}
+                          >
+                            {profileInitials(restaurant.editor.displayName)}
+                          </Avatar>
+                        ) : null}
+                        <Text c="dimmed" size="sm">
+                          Last edited
+                          {restaurant.editor ? (
+                            <>
+                              {" "}
+                              by{" "}
+                              <Text component="span" fw={600} inherit>
+                                {restaurant.editor.displayName}
+                              </Text>
+                            </>
+                          ) : null}{" "}
+                          on{" "}
+                          <Text component="span" fw={600} inherit>
+                            {formatListingTimestamp(restaurant.updatedAt)}
+                          </Text>
+                        </Text>
+                      </Group>
                     ) : null}
                   </div>
 

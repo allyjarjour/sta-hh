@@ -4,12 +4,12 @@ Use this list before and after the app goes live. Items are ordered roughly by i
 
 ## 1. Supabase (database + auth)
 
-Persistence and authentication use **Supabase Postgres** and **Supabase Auth**. Schema lives in [`supabase/migrations/001_initial.sql`](supabase/migrations/001_initial.sql).
+Persistence and authentication use **Supabase Postgres** and **Supabase Auth**. Schema lives in [`supabase/migrations/001_initial.sql`](supabase/migrations/001_initial.sql), [`supabase/migrations/002_profiles.sql`](supabase/migrations/002_profiles.sql), and [`supabase/migrations/003_restaurant_edits.sql`](supabase/migrations/003_restaurant_edits.sql).
 
 ### One-time setup
 
 1. Create a [Supabase](https://supabase.com) project.
-2. Run `supabase/migrations/001_initial.sql` in the SQL editor (or `supabase db push` if you use the CLI).
+2. Run `supabase/migrations/001_initial.sql`, `002_profiles.sql`, and `003_restaurant_edits.sql` in the SQL editor (or `supabase db push` if you use the CLI).
 3. Enable **Email** provider under Authentication → Providers and turn on **Allow new users to sign up**.
 4. Under **Authentication → URL configuration**, set Site URL (e.g. `http://localhost:3000` for dev) and add redirect URLs:
    - `http://localhost:3000/auth/callback`
@@ -20,8 +20,9 @@ Contributors can **sign up at `/login`** or you can still invite users manually 
 
 ### Row Level Security (RLS)
 
-- **SELECT** on `restaurants` and `specials`: public (anyone can browse).
-- **INSERT / UPDATE / DELETE**: `authenticated` role only (any signed-in user in v1).
+- **SELECT** on `restaurants`, `specials`, and `profiles`: public (anyone can browse; profile name/avatar shown on listings).
+- **INSERT / UPDATE / DELETE** on `restaurants` and `specials`: `authenticated` role only (any signed-in user in v1).
+- **UPDATE** on `profiles`: owner only (`auth.uid() = id`).
 - Server actions use the **anon key + user session** so RLS enforces writes; the service role key is **not** used by the web app.
 
 ## 2. Environment variables
@@ -89,8 +90,10 @@ Browsers load **OSM tiles** and **Leaflet** from `RestaurantMap`; adjust CSP if 
 
 - [ ] Home loads without signing in; list and map show data from Supabase.
 - [ ] Anonymous user does **not** see add form, edit panel, or delete buttons.
-- [ ] Sign up at `/login` (or sign in) → header shows email and sign out.
-- [ ] Signed-in user can add a restaurant → appears after refresh; map pin when geocoded.
+- [ ] Sign up at `/login` (or sign in) → header shows display name, avatar, and sign out.
+- [ ] `/settings` saves display name and optional avatar URL.
+- [ ] Signed-in user can add a restaurant → appears after refresh with “Added by …” attribution; map pin when geocoded.
+- [ ] Edit a restaurant → “Last edited by …” and timestamp appear on the listing.
 - [ ] Edit and delete work when signed in; sign out blocks further writes.
 - [ ] Production `NOMINATIM_USER_AGENT` set; geocoding returns coords for a known-good address.
 

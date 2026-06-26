@@ -20,6 +20,12 @@ export type HappyHourSpecial = {
   endTime: string | null;
 };
 
+export type UserProfile = {
+  id: string;
+  displayName: string;
+  avatarUrl: string | null;
+};
+
 export type Restaurant = {
   id: string;
   name: string;
@@ -30,4 +36,9 @@ export type Restaurant = {
   longitude: number | null;
   specials: HappyHourSpecial[];
   createdAt: string;
+  createdBy: string | null;
+  contributor?: UserProfile | null;
+  updatedAt: string | null;
+  updatedBy: string | null;
+  editor?: UserProfile | null;
 };

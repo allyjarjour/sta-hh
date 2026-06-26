@@ -4,6 +4,7 @@ import {
   specialToInsert,
   type RestaurantRow,
 } from "@/lib/supabase/types";
+import { attachContributors, getProfilesByIds } from "@/lib/profiles";
 import type { Restaurant } from "@/lib/types";
 
 const restaurantSelect = `
@@ -16,6 +17,8 @@ const restaurantSelect = `
   longitude,
   created_at,
   created_by,
+  updated_at,
+  updated_by,
   specials (
     id,
     restaurant_id,
@@ -40,7 +43,13 @@ export async function getRestaurants(): Promise<Restaurant[]> {
     throw new Error(error.message);
   }
 
-  return ((data ?? []) as RestaurantRow[]).map(mapRestaurantRow);
+  const restaurants = ((data ?? []) as RestaurantRow[]).map(mapRestaurantRow);
+  const profileIds = restaurants.flatMap((restaurant) =>
+    [restaurant.createdBy, restaurant.updatedBy].filter((id): id is string => Boolean(id)),
+  );
+  const profiles = await getProfilesByIds(profileIds);
+
+  return attachContributors(restaurants, profiles);
 }
 
 export async function addRestaurant(restaurant: Restaurant, createdBy?: string) {
@@ -80,6 +89,7 @@ export async function addRestaurant(restaurant: Restaurant, createdBy?: string) 
 export async function updateRestaurant(
   id: string,
   update: (restaurant: Restaurant) => Restaurant,
+  updatedBy?: string,
 ) {
   const restaurants = await getRestaurants();
   const existing = restaurants.find((restaurant) => restaurant.id === id);
@@ -100,6 +110,12 @@ export async function updateRestaurant(
       logo_url: updated.logoUrl,
       latitude: updated.latitude,
       longitude: updated.longitude,
+      ...(updatedBy
+        ? {
+            updated_at: new Date().toISOString(),
+            updated_by: updatedBy,
+          }
+        : {}),
     })
     .eq("id", id);
 

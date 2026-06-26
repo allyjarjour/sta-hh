@@ -1,4 +1,19 @@
-import type { HappyHourSpecial, Restaurant, Weekday } from "@/lib/types";
+import type { HappyHourSpecial, Restaurant, UserProfile, Weekday } from "@/lib/types";
+
+export type ProfileRow = {
+  id: string;
+  display_name: string;
+  avatar_url: string | null;
+  updated_at: string;
+};
+
+export function mapProfileRow(row: ProfileRow): UserProfile {
+  return {
+    id: row.id,
+    displayName: row.display_name,
+    avatarUrl: row.avatar_url,
+  };
+}
 
 export type RestaurantRow = {
   id: string;
@@ -10,6 +25,8 @@ export type RestaurantRow = {
   longitude: number | null;
   created_at: string;
   created_by: string | null;
+  updated_at: string | null;
+  updated_by: string | null;
   specials?: SpecialRow[];
 };
 
@@ -48,6 +65,9 @@ export function mapRestaurantRow(row: RestaurantRow): Restaurant {
     latitude: row.latitude,
     longitude: row.longitude,
     createdAt: row.created_at,
+    createdBy: row.created_by,
+    updatedAt: row.updated_at,
+    updatedBy: row.updated_by,
     specials,
   };
 }
