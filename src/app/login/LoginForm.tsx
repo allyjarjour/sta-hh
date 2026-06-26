@@ -35,6 +35,13 @@ export function LoginForm() {
       setError(
         "We could not confirm your email. The link may have expired — try signing up again or sign in if you already confirmed.",
       );
+      return;
+    }
+
+    if (searchParams.get("error") === "reset") {
+      setError(
+        "Your password reset link is invalid or has expired. Request a new one below.",
+      );
     }
   }, [searchParams]);
 
@@ -172,6 +179,14 @@ export function LoginForm() {
             name="password"
             required
           />
+
+          {!isSignUp ? (
+            <Text size="sm" ta="right">
+              <Anchor component={Link} href="/login/forgot-password" size="sm">
+                Forgot password?
+              </Anchor>
+            </Text>
+          ) : null}
 
           <Button color="dark" fullWidth loading={isSubmitting} type="submit">
             {isSubmitting

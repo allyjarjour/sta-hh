@@ -27,7 +27,7 @@ Seed data lives in [`data/restaurants.json`](data/restaurants.json) for import o
    - [`supabase/migrations/003_restaurant_edits.sql`](supabase/migrations/003_restaurant_edits.sql)
    - [`supabase/migrations/004_avatar_storage.sql`](supabase/migrations/004_avatar_storage.sql)
 2. Copy [`.env.example`](.env.example) to `.env.local` and fill in Supabase URL and publishable (anon) key.
-3. Enable **Email** sign-up in Supabase (Authentication → Providers → **Allow new users to sign up**) and add `http://localhost:3000/auth/callback` under **URL configuration → Redirect URLs**.
+3. Enable **Email** sign-up in Supabase (Authentication → Providers → **Allow new users to sign up**) and add `http://localhost:3000/auth/callback` under **URL configuration → Redirect URLs** (used for email confirmation and password reset).
 4. Optional: import seed restaurants:
 
    ```bash
@@ -41,7 +41,7 @@ Seed data lives in [`data/restaurants.json`](data/restaurants.json) for import o
    npm run dev
    ```
 
-Open [http://localhost:3000](http://localhost:3000). Sign in or create an account at [http://localhost:3000/login](http://localhost:3000/login).
+Open [http://localhost:3000](http://localhost:3000). Sign in or create an account at [http://localhost:3000/login](http://localhost:3000/login). Use **Forgot password?** on the sign-in form to reset your password via email.
 
 ### Environment variables
 

@@ -11,7 +11,7 @@ Persistence and authentication use **Supabase Postgres** and **Supabase Auth**. 
 1. Create a [Supabase](https://supabase.com) project.
 2. Run migrations `001` through `004` in the SQL editor (or `supabase db push` if you use the CLI). `004_avatar_storage.sql` creates the public `avatars` Storage bucket for profile photo uploads.
 3. Enable **Email** provider under Authentication → Providers and turn on **Allow new users to sign up**.
-4. Under **Authentication → URL configuration**, set Site URL (e.g. `http://localhost:3000` for dev) and add redirect URLs:
+4. Under **Authentication → URL configuration**, set Site URL (e.g. `http://localhost:3000` for dev) and add redirect URLs (email confirmation and password reset both use `/auth/callback`):
    - `http://localhost:3000/auth/callback`
    - `https://your-production-domain/auth/callback`
 5. Import seed data (optional): with env vars set locally, run `npm run migrate:json` to load [`data/restaurants.json`](data/restaurants.json). The JSON file is a backup/seed only; production reads from Postgres.

@@ -16,5 +16,6 @@ export async function GET(request: Request) {
     }
   }
 
-  return NextResponse.redirect(`${origin}/login?error=confirmation`);
+  const errorParam = next === "/auth/reset-password" ? "reset" : "confirmation";
+  return NextResponse.redirect(`${origin}/login?error=${errorParam}`);
 }
