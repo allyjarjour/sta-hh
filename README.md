@@ -61,13 +61,13 @@ See [`.env.example`](.env.example) for the full list.
 - **Contribute** — Signed-in users can add restaurants, edit specials, and delete entries (UI + server actions + RLS).
 - **Geocoding** — Optional address on add/edit; validated to St. Johns County when coordinates are resolved.
 - **Logos** — Derived from the restaurant website favicon unless a logo URL override is provided.
-- **Profiles** — Contributors have a display name and optional avatar (`/settings`); upload an image or paste a URL. Shown in the header and as “Added by …” on listings they create.
+- **Profiles** — Contributors have a display name and optional avatar (`/settings`); upload an image. Shown in the header and as “Added by …” on listings they create.
 - **Edit history** — Listings show who last edited a restaurant and when, after the first save.
 
 ## Auth
 
 - Contributors **sign up or sign in** at `/login` with email and password.
-- Edit **display name and avatar** at `/settings` (upload an image or paste a public HTTPS URL).
+- Edit **display name and avatar** at `/settings` (upload an image).
 - If Supabase **Confirm email** is enabled, new users must click the link in their inbox before signing in.
 - v1 policy: any authenticated user can edit any restaurant (no per-owner rows yet).
 

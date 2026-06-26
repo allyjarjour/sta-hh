@@ -2,6 +2,7 @@ import { AppShell, AppShellMain, Container } from "@mantine/core";
 import { redirect } from "next/navigation";
 
 import { ProfileForm } from "@/app/settings/ProfileForm";
+import { SiteHeader } from "@/components/SiteHeader";
 import { getAuthUser } from "@/lib/auth";
 import { getProfile, upsertProfile } from "@/lib/profiles";
 
@@ -29,7 +30,9 @@ export default async function SettingsPage() {
   }
 
   return (
-    <AppShell padding="md">
+    <AppShell header={{ height: 72 }} padding="md">
+      <SiteHeader />
+
       <AppShellMain>
         <Container size="sm" py={{ base: "xl", md: 64 }}>
           <ProfileForm profile={profile} />

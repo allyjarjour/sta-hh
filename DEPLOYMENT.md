@@ -92,7 +92,7 @@ Browsers load **OSM tiles** and **Leaflet** from `RestaurantMap`; adjust CSP if 
 - [ ] Home loads without signing in; list and map show data from Supabase.
 - [ ] Anonymous user does **not** see add form, edit panel, or delete buttons.
 - [ ] Sign up at `/login` (or sign in) → header shows display name, avatar, and sign out.
-- [ ] `/settings` saves display name; avatar upload and URL both work.
+- [ ] `/settings` saves display name and avatar upload.
 - [ ] Signed-in user can add a restaurant → appears after refresh with “Added by …” attribution; map pin when geocoded.
 - [ ] Edit a restaurant → “Last edited by …” and timestamp appear on the listing.
 - [ ] Edit and delete work when signed in; sign out blocks further writes.

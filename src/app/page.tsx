@@ -1,10 +1,8 @@
 import {
   AppShell,
-  AppShellHeader,
   AppShellMain,
   Badge,
   Container,
-  Group,
   Paper,
   SimpleGrid,
   Stack,
@@ -12,10 +10,9 @@ import {
   Title,
 } from "@mantine/core";
 
-import { AuthHeader } from "@/components/AuthHeader";
-import { HappyHourLogo } from "@/components/HappyHourLogo";
 import { RestaurantForm } from "@/components/RestaurantForm";
 import { SignInPrompt } from "@/components/SignInPrompt";
+import { SiteHeader } from "@/components/SiteHeader";
 import { SpecialsBrowseSection } from "@/components/SpecialsBrowseSection";
 import { getAuthUser } from "@/lib/auth";
 import { getRestaurants } from "@/lib/data";
@@ -36,14 +33,7 @@ export default async function Home() {
 
   return (
     <AppShell header={{ height: 72 }} padding="md">
-      <AppShellHeader withBorder={false}>
-        <Container size="xl" h="100%">
-          <Group h="100%" justify="space-between" wrap="nowrap">
-            <HappyHourLogo showWordmark size={44} />
-            <AuthHeader />
-          </Group>
-        </Container>
-      </AppShellHeader>
+      <SiteHeader />
 
       <AppShellMain>
         <Container size="xl" py={{ base: "xl", md: 48 }}>

@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  Anchor,
   Avatar,
   Button,
   FileInput,
@@ -12,7 +11,6 @@ import {
   TextInput,
   Title,
 } from "@mantine/core";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -27,7 +25,6 @@ export function ProfileForm({ profile }: { profile: UserProfile }) {
   const [avatarUrl, setAvatarUrl] = useState(profile.avatarUrl ?? "");
   const [displayNameError, setDisplayNameError] = useState<string | null>(null);
   const [avatarUploadError, setAvatarUploadError] = useState<string | null>(null);
-  const [avatarUrlError, setAvatarUrlError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
@@ -69,7 +66,6 @@ export function ProfileForm({ profile }: { profile: UserProfile }) {
     event.preventDefault();
     setDisplayNameError(null);
     setAvatarUploadError(null);
-    setAvatarUrlError(null);
     setIsSubmitting(true);
 
     const formData = new FormData(event.currentTarget);
@@ -84,7 +80,7 @@ export function ProfileForm({ profile }: { profile: UserProfile }) {
         }
 
         if (result.field === "avatarUrl") {
-          setAvatarUrlError(result.message);
+          setAvatarUploadError(result.message);
           return;
         }
 
@@ -106,6 +102,7 @@ export function ProfileForm({ profile }: { profile: UserProfile }) {
   return (
     <Paper p="xl" radius="xl" shadow="md" withBorder maw={480} mx="auto">
       <form onSubmit={handleSubmit}>
+        <input name="avatarUrl" type="hidden" value={avatarUrl} />
         <Stack gap="md">
           <div>
             <Text c="orange" fw={700} size="sm" tt="uppercase" lts={2}>
@@ -157,30 +154,9 @@ export function ProfileForm({ profile }: { profile: UserProfile }) {
             value={displayName}
           />
 
-          <TextInput
-            description="Optional. Upload above or paste a public https:// image URL."
-            error={avatarUrlError}
-            inputMode="url"
-            label="Avatar URL"
-            name="avatarUrl"
-            onChange={(event) => {
-              setAvatarUrl(event.currentTarget.value);
-              setAvatarUrlError(null);
-            }}
-            placeholder="https://example.com/avatar.jpg"
-            type="url"
-            value={avatarUrl}
-          />
-
           <Button color="dark" disabled={isBusy} fullWidth loading={isSubmitting} type="submit">
             {isSubmitting ? "Saving…" : "Save profile"}
           </Button>
-
-          <Text c="dimmed" size="sm" ta="center">
-            <Anchor component={Link} href="/">
-              Back to happy hours
-            </Anchor>
-          </Text>
         </Stack>
       </form>
     </Paper>
