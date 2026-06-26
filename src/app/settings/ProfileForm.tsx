@@ -17,7 +17,7 @@ import { useState } from "react";
 
 import { updateProfile } from "@/app/profile/actions";
 import { profileInitials } from "@/lib/profile-display";
-import type { UserProfile } from "@/lib/types";
+import type { UserProfile } from "@/types";
 
 export function ProfileForm({ profile }: { profile: UserProfile }) {
   const router = useRouter();

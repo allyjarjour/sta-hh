@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 
 import { MapSection } from "@/components/MapSection";
 import { RestaurantList } from "@/components/RestaurantList";
-import { WEEKDAYS, type Restaurant, type Weekday } from "@/lib/types";
+import { WEEKDAYS, type Restaurant, type Weekday } from "@/types";
 
 const ALL_DAYS = "all" as const;
 

@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import type { ActionResult } from "@/lib/action-result";
+import type { ActionResult } from "@/types/action-result";
 import { requireAuthUser } from "@/lib/auth";
 import { parseOptionalPublicHttpUrl } from "@/lib/logo";
 import { upsertProfile } from "@/lib/profiles";

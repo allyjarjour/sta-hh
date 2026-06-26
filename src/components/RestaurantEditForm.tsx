@@ -15,7 +15,7 @@ import { useState } from "react";
 import { updateRestaurant } from "@/app/actions";
 import { SpecialDayFields } from "@/components/SpecialDayFields";
 import { SpecialTimeFields } from "@/components/SpecialTimeFields";
-import type { Restaurant } from "@/lib/types";
+import type { Restaurant } from "@/types";
 
 type RequiredField = "name" | "website" | "specialTitle" | "specialDescription";
 type FieldErrors = Partial<Record<RequiredField, string>>;

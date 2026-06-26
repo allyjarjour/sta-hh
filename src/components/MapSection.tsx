@@ -3,7 +3,7 @@
 import { Badge, Group, Paper, Stack, Text, Title } from "@mantine/core";
 import dynamic from "next/dynamic";
 
-import type { Restaurant } from "@/lib/types";
+import type { Restaurant } from "@/types";
 
 const RestaurantMap = dynamic(
   () =>

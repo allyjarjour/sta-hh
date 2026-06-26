@@ -8,7 +8,7 @@ import {
   getRestaurants,
   updateRestaurant as updateRestaurantRecord,
 } from "@/lib/data";
-import type { ActionResult } from "@/lib/action-result";
+import type { ActionResult } from "@/types/action-result";
 import { requireAuthUser } from "@/lib/auth";
 import { geocodeAddressForMap } from "@/lib/geocode";
 import {
@@ -16,7 +16,7 @@ import {
   type HappyHourSpecial,
   type Restaurant,
   type Weekday,
-} from "@/lib/types";
+} from "@/types";
 import {
   getFaviconUrl,
   parseOptionalPublicHttpUrl,

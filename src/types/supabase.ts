@@ -1,4 +1,4 @@
-import type { HappyHourSpecial, Restaurant, UserProfile, Weekday } from "@/lib/types";
+import type { HappyHourSpecial, Restaurant, UserProfile, Weekday } from "@/types";
 
 export type ProfileRow = {
   id: string;

@@ -10,8 +10,8 @@ import path from "node:path";
 
 import { createClient } from "@supabase/supabase-js";
 
-import { specialToInsert } from "../src/lib/supabase/types";
-import type { Restaurant } from "../src/lib/types";
+import { specialToInsert } from "../src/types/supabase";
+import type { Restaurant } from "../src/types";
 
 async function main() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;

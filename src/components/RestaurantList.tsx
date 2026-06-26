@@ -13,7 +13,7 @@ import {
 import { DeleteRestaurantButton } from "@/components/DeleteRestaurantButton";
 import { RestaurantEditForm } from "@/components/RestaurantEditForm";
 import { profileInitials, formatListingTimestamp } from "@/lib/profile-display";
-import type { Restaurant, Weekday } from "@/lib/types";
+import type { Restaurant, Weekday } from "@/types";
 
 function formatTime(value: string) {
   const [hour, minute] = value.split(":");

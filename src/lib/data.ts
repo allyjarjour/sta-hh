@@ -3,9 +3,9 @@ import {
   mapRestaurantRow,
   specialToInsert,
   type RestaurantRow,
-} from "@/lib/supabase/types";
+} from "@/types/supabase";
 import { attachContributors, getProfilesByIds } from "@/lib/profiles";
-import type { Restaurant } from "@/lib/types";
+import type { Restaurant } from "@/types";
 
 const restaurantSelect = `
   id,

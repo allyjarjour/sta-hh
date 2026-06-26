@@ -3,7 +3,7 @@
 import { Checkbox, Group } from "@mantine/core";
 import { useEffect, useRef, useState } from "react";
 
-import { WEEKDAYS, type Weekday } from "@/lib/types";
+import { WEEKDAYS, type Weekday } from "@/types";
 
 type SpecialDayFieldsProps = {
   defaultDays?: Weekday[];

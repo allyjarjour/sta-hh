@@ -2,7 +2,7 @@
 
 import { CircleMarker, MapContainer, Popup, TileLayer } from "react-leaflet";
 
-import type { Restaurant } from "@/lib/types";
+import type { Restaurant } from "@/types";
 
 type MappedRestaurant = Restaurant & {
   latitude: number;
