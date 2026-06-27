@@ -3,6 +3,7 @@ import {
   Badge,
   Button,
   Card,
+  Flex,
   Group,
   Paper,
   Stack,
@@ -37,6 +38,43 @@ function formatSpecialTime(special: Restaurant["specials"][number]) {
   }
 
   return "Time TBD";
+}
+
+function ProfileAttribution({
+  avatarColor,
+  avatarUrl,
+  displayName,
+  prefix,
+  timestamp,
+}: {
+  avatarColor: "gray" | "orange";
+  avatarUrl: string | null;
+  displayName: string;
+  prefix: string;
+  timestamp: string;
+}) {
+  return (
+    <Group align="center" gap="xs" wrap="nowrap">
+      <Avatar
+        color={avatarColor}
+        radius="xl"
+        size={24}
+        src={avatarUrl}
+      >
+        {profileInitials(displayName)}
+      </Avatar>
+      <Text c="dimmed" size="sm">
+        {prefix}{" "}
+        <Text component="span" fw={600} inherit>
+          {displayName}
+        </Text>{" "}
+        on{" "}
+        <Text component="span" fw={600} inherit>
+          {formatListingTimestamp(timestamp)}
+        </Text>
+      </Text>
+    </Group>
+  );
 }
 
 export function RestaurantList({
@@ -106,56 +144,35 @@ export function RestaurantList({
                       </Text>
                     ) : null}
                     {restaurant.contributor ? (
-                      <Group gap="xs" mt="sm">
-                        <Avatar
-                          color="orange"
-                          radius="xl"
-                          size={24}
-                          src={restaurant.contributor.avatarUrl}
-                        >
-                          {profileInitials(restaurant.contributor.displayName)}
-                        </Avatar>
-                        <Text c="dimmed" size="sm">
-                          Added by{" "}
-                          <Text component="span" fw={600} inherit>
-                            {restaurant.contributor.displayName}
-                          </Text>{" "}
-                          on{" "}
-                          <Text component="span" fw={600} inherit>
-                            {formatListingTimestamp(restaurant.createdAt)}
-                          </Text>
-                        </Text>
-                      </Group>
+                      <Flex mt="sm">
+                        <ProfileAttribution
+                          avatarColor="orange"
+                          avatarUrl={restaurant.contributor.avatarUrl}
+                          displayName={restaurant.contributor.displayName}
+                          prefix="Added by"
+                          timestamp={restaurant.createdAt}
+                        />
+                      </Flex>
                     ) : null}
                     {restaurant.updatedAt ? (
-                      <Group gap="xs" mt={restaurant.contributor ? 4 : "sm"}>
+                      <Flex mt={restaurant.contributor ? 4 : "sm"}>
                         {restaurant.editor ? (
-                          <Avatar
-                            color="gray"
-                            radius="xl"
-                            size={24}
-                            src={restaurant.editor.avatarUrl}
-                          >
-                            {profileInitials(restaurant.editor.displayName)}
-                          </Avatar>
-                        ) : null}
-                        <Text c="dimmed" size="sm">
-                          Last edited
-                          {restaurant.editor ? (
-                            <>
-                              {" "}
-                              by{" "}
-                              <Text component="span" fw={600} inherit>
-                                {restaurant.editor.displayName}
-                              </Text>
-                            </>
-                          ) : null}{" "}
-                          on{" "}
-                          <Text component="span" fw={600} inherit>
-                            {formatListingTimestamp(restaurant.updatedAt)}
+                          <ProfileAttribution
+                            avatarColor="gray"
+                            avatarUrl={restaurant.editor.avatarUrl}
+                            displayName={restaurant.editor.displayName}
+                            prefix="Last edited by"
+                            timestamp={restaurant.updatedAt}
+                          />
+                        ) : (
+                          <Text c="dimmed" size="sm">
+                            Last edited on{" "}
+                            <Text component="span" fw={600} inherit>
+                              {formatListingTimestamp(restaurant.updatedAt)}
+                            </Text>
                           </Text>
-                        </Text>
-                      </Group>
+                        )}
+                      </Flex>
                     ) : null}
                   </div>
 
